@@ -8,6 +8,7 @@ import br.com.lox.domain.owner.repository.OwnerRepository;
 import br.com.lox.domain.property.dto.CreatePropertyData;
 import br.com.lox.domain.property.entity.Property;
 import br.com.lox.domain.property.repository.PropertyRepository;
+import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -27,7 +28,8 @@ public class PropertyService {
         this.ownerRepository = ownerRepository;
     }
 
-    public ResponseEntity<Property> create(CreatePropertyData data) {
+    public ResponseEntity<Property> create(@Valid CreatePropertyData data) {
+
         List<Component> components = componentRepository.findAllById(data.componentsId());
 
         if (components.size() != data.componentsId().size()) {

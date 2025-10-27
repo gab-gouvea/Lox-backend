@@ -1,10 +1,8 @@
 package br.com.lox.domain.item.entity;
 
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import br.com.lox.domain.inventory.entity.Inventory;
+import jakarta.persistence.*;
 
 import java.math.BigDecimal;
 
@@ -14,8 +12,14 @@ public class Item {
     @GeneratedValue(strategy = GenerationType.UUID)
     private String id;
 
+    @ManyToOne
+    @JoinColumn(name = "inventory_id")
+    Inventory inventory;
+
     private String name;
     private int quantity;
     private String ImageUrl;
     private BigDecimal price;
+
+
 }
