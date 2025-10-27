@@ -1,0 +1,9 @@
+services:
+  mysql:
+    image: bitnami/mysql
+    environment:
+      - MYSQL_DATABASE=lox
+      - ALLOW_EMPTY_PASSWORD=yes # dev
+      - MYSQL_ROOT_PASSWORD=lox
+      - MYSQL_USER=lox
+      - MYSQL_PASSWORD=lox

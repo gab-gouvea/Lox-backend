@@ -39,7 +39,18 @@ public class PropertyService {
 
         Owner owner = ownerRepository.getReferenceById(data.ownerId());
 
-        propertyRepository.save(new Property(data.title(), data.address(), data.photos(), components, owner, data.notes(), data.senhaPortaria(), data.senhaPorta()));
+        var entity = new Property(
+                data.title(),
+                data.address(),
+                data.photos(),
+                components,
+                owner,
+                data.notes(),
+                data.senhaPortaria(),
+                data.senhaPorta());
+
+        propertyRepository.save(entity);
+
         return  ResponseEntity.status(HttpStatus.CREATED).build();
     }
 }
