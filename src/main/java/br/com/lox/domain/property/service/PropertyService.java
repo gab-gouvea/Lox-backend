@@ -58,7 +58,6 @@ public class PropertyService {
                 data.doorCode());
 
         propertyRepository.save(entity);
-
         return ResponseEntity.status(HttpStatus.CREATED).body(entity);
     }
 
