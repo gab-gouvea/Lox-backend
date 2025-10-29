@@ -4,11 +4,13 @@ package br.com.lox.domain.property.entity;
 import br.com.lox.domain.checkin.entity.CheckIn;
 import br.com.lox.domain.component.entity.Component;
 import br.com.lox.domain.owner.entity.Owner;
+import br.com.lox.domain.property.dto.UpdatePropertyData;
 import br.com.lox.domain.rental.entity.Rental;
 import br.com.lox.domain.user.entity.User;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -18,6 +20,7 @@ import java.util.Map;
 @Entity
 @NoArgsConstructor
 @AllArgsConstructor
+@Setter
 public class Property {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
@@ -61,18 +64,28 @@ public class Property {
     @JoinColumn(name = "user_id")
     private User user;
 
-    private String senhaPortaria; //opcional
-    private String senhaPorta; //opcional
+    private String conciergeCode; //opcional
+    private String doorCode; //opcional
 
 
-    public Property(String title, String address, Map<Integer, String> photos, List<Component> components, Owner owner, String notes, String s, String s1) {
+    public Property(String title, String address, Map<Integer, String> photos, List<Component> components, Owner owner, String notes, String c, String c1) {
         this.title = title;
         this.address = address;
         this.photos = photos;
         this.components = components;
         this.owner = owner;
         this.notes = notes;
-        this.senhaPortaria = s;
-        this.senhaPorta = s1;
+        this.conciergeCode = c;
+        this.doorCode = c1;
+    }
+
+    public void updateValues(UpdatePropertyData data, List<Component> components) {
+        if (data.title() != null) this.title = data.title();
+        if (data.address() != null) this.address = data.address();
+        if (data.photos() != null) this.photos = data.photos();
+        if (data.notes() != null) this.notes = data.notes();
+        if (data.conciergeCode() != null) this.conciergeCode = data.conciergeCode();
+        if (data.doorCode() != null) this.doorCode = data.doorCode();
+        if (components != null) this.components = components;
     }
 }
