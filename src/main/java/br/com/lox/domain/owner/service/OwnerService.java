@@ -55,7 +55,7 @@ public class OwnerService {
     public ResponseEntity<Owner> findById(String id) {
         return ownerRepository.findById(id)
                 .map(ResponseEntity::ok)
-                .orElse(ResponseEntity.notFound().build());
+                .orElseGet(() -> ResponseEntity.notFound().build());
     }
 
     @Transactional
