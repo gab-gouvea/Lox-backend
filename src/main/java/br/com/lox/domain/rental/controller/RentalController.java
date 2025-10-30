@@ -37,6 +37,11 @@ public class RentalController {
 
     @PutMapping("/{id}")
     public ResponseEntity<Rental> update(@PathVariable String id, @RequestBody @Valid UpdateRentalData data) {
-        return
+        return rentalService.update(id, data);
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteById(@PathVariable String id) {
+        return rentalService.deleteById(id);
     }
 }

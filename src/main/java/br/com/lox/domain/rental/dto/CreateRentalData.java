@@ -7,7 +7,7 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 public record CreateRentalData(
-        @NotBlank String tenantRental,
+        @NotBlank String tenantName,
         @NotBlank String propertyId,
         @NotNull BigDecimal price,
         @NotNull Integer people,

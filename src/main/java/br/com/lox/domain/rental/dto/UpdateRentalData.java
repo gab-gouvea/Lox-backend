@@ -4,7 +4,7 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 public record UpdateRentalData(
-        String tenantRental,
+        String tenantName,
         String propertyId,
         BigDecimal price,
         Integer people,

@@ -38,7 +38,7 @@ public class RentalService {
         Property property = propertyRepository.getReferenceById(data.propertyId());
 
         var entity = new Rental(
-                data.tenantRental(),
+                data.tenantName(),
                 property,
                 data.price(),
                 data.people(),
@@ -89,16 +89,23 @@ public class RentalService {
             property = optionalProperty.get();
         }
 
+        rental.updateValues(inventory, property, data);
+        rentalRepository.save(rental);
 
-
-
-
-
-
-
-
+        return ResponseEntity.ok(rental);
     }
 
+    @Transactional
+    public ResponseEntity<Void> deleteById(String id) {
+        Optional<Rental> optionalRental = rentalRepository.findById(id);
 
+        if (optionalRental.isEmpty()) {
+            return ResponseEntity.notFound().build();
+        }
 
+        Rental rental = optionalRental.get();
+        rentalRepository.delete(rental);
+
+        return ResponseEntity.notFound().build();
+    }
 }

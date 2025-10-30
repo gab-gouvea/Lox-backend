@@ -2,14 +2,17 @@ package br.com.lox.domain.rental.entity;
 
 import br.com.lox.domain.inventory.entity.Inventory;
 import br.com.lox.domain.property.entity.Property;
+import br.com.lox.domain.rental.dto.UpdateRentalData;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 @Entity
+@NoArgsConstructor
 public class Rental {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
@@ -36,5 +39,15 @@ public class Rental {
         this.people = people;
         this.checkout = checkout;
         this.checkin = checkin;
+    }
+
+    public void updateValues(Inventory inventory, Property property, UpdateRentalData data) {
+        if (inventory != null) this.inventory = inventory;
+        if (property != null) this.property = property;
+        if (data.tenantName() != null) this.tenantName = data.tenantName();
+        if (data.price() != null) this.price = data.price();
+        if (data.people() != null) this.people = data.people();
+        if (data.checkout() != null) this.checkout = data.checkout();
+        if (data.checkin() != null) this.checkin = data.checkin();
     }
 }
