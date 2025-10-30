@@ -23,7 +23,7 @@ public class Rental {
     @OneToOne(cascade = CascadeType.ALL)
     private Inventory inventory;
 
-    private int people;
+    private Integer people;
     private LocalDateTime checkout;
     private LocalDateTime checkin;
 }
