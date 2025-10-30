@@ -3,6 +3,8 @@ package br.com.lox.domain.rental.entity;
 import br.com.lox.domain.inventory.entity.Inventory;
 import br.com.lox.domain.property.entity.Property;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -26,4 +28,13 @@ public class Rental {
     private Integer people;
     private LocalDateTime checkout;
     private LocalDateTime checkin;
+
+    public Rental(String tenantName, Property property, BigDecimal price, Integer people, LocalDateTime checkout, LocalDateTime checkin) {
+        this.tenantName = tenantName;
+        this.property = property;
+        this.price = price;
+        this.people = people;
+        this.checkout = checkout;
+        this.checkin = checkin;
+    }
 }
