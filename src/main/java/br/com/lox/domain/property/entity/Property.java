@@ -9,6 +9,7 @@ import br.com.lox.domain.rental.entity.Rental;
 import br.com.lox.domain.user.entity.User;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
@@ -21,6 +22,7 @@ import java.util.Map;
 @NoArgsConstructor
 @AllArgsConstructor
 @Setter
+@Getter
 public class Property {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)

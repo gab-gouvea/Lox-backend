@@ -5,6 +5,7 @@ import br.com.lox.domain.component.MaintenanceStatus;
 import br.com.lox.domain.component.dto.UpdateComponentData;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
@@ -13,6 +14,7 @@ import java.time.LocalDateTime;
 @Entity
 @NoArgsConstructor
 @AllArgsConstructor
+@Getter
 public class Component {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)

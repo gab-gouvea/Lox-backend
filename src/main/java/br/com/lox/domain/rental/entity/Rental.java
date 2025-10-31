@@ -6,6 +6,7 @@ import br.com.lox.domain.rental.dto.UpdateRentalData;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
@@ -13,6 +14,7 @@ import java.time.LocalDateTime;
 
 @Entity
 @NoArgsConstructor
+@Getter
 public class Rental {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)

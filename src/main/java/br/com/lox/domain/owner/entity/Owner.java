@@ -3,6 +3,7 @@ package br.com.lox.domain.owner.entity;
 import br.com.lox.domain.owner.dto.UpdateOwnerData;
 import br.com.lox.domain.property.entity.Property;
 import jakarta.persistence.*;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.util.ArrayList;
@@ -10,6 +11,7 @@ import java.util.List;
 
 @Entity
 @NoArgsConstructor
+@Getter
 public class Owner {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
