@@ -21,7 +21,7 @@ public class Owner {
     private String cpf;
 
     @OneToMany(mappedBy = "owner", cascade = CascadeType.ALL)
-    private List<Property> properties;
+    private List<Property> properties =  new ArrayList<>();
     private String email;
     private String phone;
 
