@@ -9,7 +9,6 @@ public record CreateOwnerData(
         @NotBlank String name,
         @NotBlank String cpf,
         @NotBlank String email,
-        String phone,
-        List<String> propertiesId
+        String phone
 ) {
 }

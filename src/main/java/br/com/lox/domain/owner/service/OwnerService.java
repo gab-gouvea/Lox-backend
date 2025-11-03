@@ -11,7 +11,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -32,20 +31,11 @@ public class OwnerService {
             return ResponseEntity.status(HttpStatus.CONFLICT).build();
         }
 
-        List<Property> properties = null;
-        if (data.propertiesId() != null) {
-            properties = propertyRepository.findAllById(data.propertiesId());
-            if (properties.size() != data.propertiesId().size()) {
-                return ResponseEntity.notFound().build();
-            }
-        }
-
         var entity = new Owner(
                 data.name(),
                 data.cpf(),
                 data.email(),
-                data.phone(),
-                properties
+                data.phone()
         );
 
         ownerRepository.save(entity);
