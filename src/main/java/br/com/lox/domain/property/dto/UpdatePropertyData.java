@@ -10,6 +10,7 @@ public record UpdatePropertyData(
         List<String> componentsId,
         String notes,
         String conciergeCode,
-        String doorCode
+        String doorCode,
+        Boolean active
 ) {
 }

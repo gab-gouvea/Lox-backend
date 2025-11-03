@@ -60,7 +60,7 @@ public class Property {
 
     private String notes;
 
-    private boolean active = true;
+    private Boolean active = true;
 
     @ManyToOne
     @JoinColumn(name = "user_id")
