@@ -111,5 +111,4 @@ public class PropertyService {
         propertyRepository.delete(property);
         return ResponseEntity.noContent().build();
     }
-
 }
