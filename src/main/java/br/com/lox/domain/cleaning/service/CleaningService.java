@@ -94,6 +94,4 @@ public class CleaningService {
 
         return ResponseEntity.noContent().build();
     }
-
-
 }

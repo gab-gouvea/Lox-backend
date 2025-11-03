@@ -55,7 +55,9 @@ public class PropertyService {
                 owner,
                 data.notes(),
                 data.conciergeCode(),
-                data.doorCode());
+                data.doorCode()
+        );
+
 
         propertyRepository.save(entity);
         return ResponseEntity.status(HttpStatus.CREATED).body(entity);
