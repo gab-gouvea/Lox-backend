@@ -20,6 +20,5 @@ public record CreatePropertyData(
         String notes,
         String conciergeCode,
         String doorCode
-
 ) {
 }

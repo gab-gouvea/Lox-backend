@@ -8,6 +8,7 @@ import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
@@ -21,6 +22,7 @@ public class CategoryService {
         this.categoryRepository = categoryRepository;
     }
 
+    @Transactional
     public ResponseEntity<Category> create(@Valid CreateCategoryData data) {
         if (!categoryRepository.existsByName(data.name()) || !categoryRepository.existsByColor(data.color())) {
             return ResponseEntity.status(HttpStatus.CONFLICT).build();
@@ -42,9 +44,10 @@ public class CategoryService {
     public ResponseEntity<Category> findById(String id) {
         return categoryRepository.findById(id)
                 .map(ResponseEntity::ok)
-                .orElse(ResponseEntity.notFound().build());
+                .orElseGet(() -> ResponseEntity.notFound().build());
     }
 
+    @Transactional
     public ResponseEntity<Category> update(String id, @Valid UpdateCategoryData data) {
         Optional<Category> optionalCategory = categoryRepository.findById(id);
 
@@ -64,6 +67,7 @@ public class CategoryService {
         return ResponseEntity.ok(category);
     }
 
+    @Transactional
     public ResponseEntity<Void> deleteById(String id) {
         Optional<Category> optionalCategory = categoryRepository.findById(id);
 

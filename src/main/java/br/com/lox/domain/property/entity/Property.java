@@ -31,8 +31,8 @@ public class Property {
     private String title;
     private String address;
 
-    @OneToOne(cascade = CascadeType.ALL)
-    private CheckIn checkin;
+    // @OneToOne(cascade = CascadeType.ALL)
+    // private CheckIn checkin;
 
     @ElementCollection
     @CollectionTable(
