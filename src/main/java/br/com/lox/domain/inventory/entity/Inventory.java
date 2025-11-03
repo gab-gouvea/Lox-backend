@@ -3,6 +3,8 @@ package br.com.lox.domain.inventory.entity;
 
 import br.com.lox.domain.item.entity.Item;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -21,6 +23,9 @@ public class Inventory {
     private String responsible;
 
 
-
-
+    public Inventory(List<Item> items, LocalDate date, String responsible) {
+        this.items = items;
+        this.date = date;
+        this.responsible = responsible;
+    }
 }
