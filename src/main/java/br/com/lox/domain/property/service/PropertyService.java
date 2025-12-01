@@ -3,12 +3,16 @@ package br.com.lox.domain.property.service;
 
 import br.com.lox.domain.component.entity.Component;
 import br.com.lox.domain.component.repository.ComponentRepository;
+import br.com.lox.domain.component.service.ComponentService;
 import br.com.lox.domain.owner.entity.Owner;
 import br.com.lox.domain.owner.repository.OwnerRepository;
+import br.com.lox.domain.owner.service.OwnerService;
 import br.com.lox.domain.property.dto.CreatePropertyData;
 import br.com.lox.domain.property.dto.UpdatePropertyData;
 import br.com.lox.domain.property.entity.Property;
 import br.com.lox.domain.property.repository.PropertyRepository;
+import br.com.lox.exceptions.ComponentNotFoundException;
+import br.com.lox.exceptions.PropertyNotFoundException;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -22,30 +26,20 @@ import java.util.Optional;
 public class PropertyService {
 
     private final PropertyRepository propertyRepository;
-    private final ComponentRepository componentRepository;
-    private final OwnerRepository ownerRepository;
+    private final ComponentService componentService;
+    private final OwnerService ownerService;
 
-    public PropertyService(PropertyRepository propertyRepository, ComponentRepository componentRepository, OwnerRepository ownerRepository) {
+    public PropertyService(PropertyRepository propertyRepository, ComponentRepository componentRepository, OwnerRepository ownerRepository, ComponentService componentService, OwnerService ownerService) {
         this.propertyRepository = propertyRepository;
-        this.componentRepository = componentRepository;
-        this.ownerRepository = ownerRepository;
+        this.componentService = componentService;
+        this.ownerService = ownerService;
     }
 
     @Transactional
-    public ResponseEntity<Property> create(@Valid CreatePropertyData data) {
+    public Property create(@Valid CreatePropertyData data) {
+        List<Component> components = componentService.findAllByIds(data.componentsId());
 
-        List<Component> components = componentRepository.findAllById(data.componentsId());
-
-        if (components.size() != data.componentsId().size()) {
-            return ResponseEntity.notFound().build();
-        }
-
-        // Owner owner = ownerService.findById(data.ownerId()));
-        if (!ownerRepository.existsById(data.ownerId())) {
-            return ResponseEntity.notFound().build();
-        }
-
-        Owner owner = ownerRepository.getReferenceById(data.ownerId());
+        Owner owner = ownerService.findById(data.ownerId());
 
         var entity = new Property(
                 data.title(),
@@ -58,14 +52,22 @@ public class PropertyService {
                 data.doorCode()
         );
 
-
-        propertyRepository.save(entity);
-        return ResponseEntity.status(HttpStatus.CREATED).body(entity);
+        return propertyRepository.save(entity);
     }
 
     //@Transactional(readOnly = true)
     public List<Property> findAll() {
         return propertyRepository.findAll();
+    }
+
+    public List<Property> findAllByIds(List<String> ids) {
+        List<Property> properties = propertyRepository.findAllById(ids);
+
+        if (properties.size() != ids.size()) {
+            throw new PropertyNotFoundException("Um ou mais propriedades não foram encontradas: " + ids);
+        }
+
+        return properties;
     }
 
     //@Transactional(readOnly = true)

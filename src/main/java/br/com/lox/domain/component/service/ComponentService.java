@@ -5,12 +5,14 @@ import br.com.lox.domain.component.dto.UpdateComponentData;
 import br.com.lox.domain.component.entity.Component;
 import br.com.lox.domain.component.repository.ComponentRepository;
 import br.com.lox.domain.property.service.PropertyService;
+import br.com.lox.exceptions.ComponentNotFoundException;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -44,6 +46,16 @@ public class ComponentService {
 
     public List<Component> findAll() {
         return componentRepository.findAll();
+    }
+
+    public List<Component> findAllByIds(List<String> ids) {
+        List<Component> components = componentRepository.findAllById(ids);
+
+        if (components.size() != ids.size()) {
+            throw new ComponentNotFoundException("Um ou mais componentes não foram encontrados: " + ids);
+        }
+
+        return components;
     }
 
     public ResponseEntity<Component> findById(String id) {

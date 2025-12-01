@@ -6,6 +6,9 @@ import br.com.lox.domain.owner.entity.Owner;
 import br.com.lox.domain.owner.repository.OwnerRepository;
 import br.com.lox.domain.property.entity.Property;
 import br.com.lox.domain.property.repository.PropertyRepository;
+import br.com.lox.domain.property.service.PropertyService;
+import br.com.lox.exceptions.BusinessRuleException;
+import br.com.lox.exceptions.OwnerNotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -18,17 +21,17 @@ import java.util.Optional;
 public class OwnerService {
 
     private final OwnerRepository ownerRepository;
-    private final PropertyRepository propertyRepository;
+    private final PropertyService propertyService;
 
-    public OwnerService(OwnerRepository ownerRepository, PropertyRepository propertyRepository) {
+    public OwnerService(OwnerRepository ownerRepository, PropertyRepository propertyRepository, PropertyService propertyService) {
         this.ownerRepository = ownerRepository;
-        this.propertyRepository = propertyRepository;
+        this.propertyService = propertyService;
     }
 
     @Transactional
-    public ResponseEntity<Owner> create(CreateOwnerData data) {
+    public Owner create(CreateOwnerData data) {
         if (ownerRepository.existsByCpf(data.cpf()) || ownerRepository.existsByEmail(data.email())) {
-            return ResponseEntity.status(HttpStatus.CONFLICT).build();
+            throw new BusinessRuleException("Proprietário já cadastrado");
         }
 
         var entity = new Owner(
@@ -38,42 +41,31 @@ public class OwnerService {
                 data.phone()
         );
 
-        ownerRepository.save(entity);
-        return ResponseEntity.status(HttpStatus.CREATED).build();
+        return ownerRepository.save(entity);
     }
 
     public List<Owner> findAll() {
         return ownerRepository.findAll();
     }
 
-    public ResponseEntity<Owner> findById(String id) {
+    public Owner findById(String id) {
         return ownerRepository.findById(id)
-                .map(ResponseEntity::ok)
-                .orElseGet(() -> ResponseEntity.notFound().build());
+                .orElseThrow(() -> new OwnerNotFoundException("Proprietário não foi encontrado no sistema " + id));
     }
 
     @Transactional
-    public ResponseEntity<Owner> update(String id, UpdateOwnerData data) {
-        Optional<Owner> optionalOwner = ownerRepository.findById(id);
-
-        if (optionalOwner.isEmpty()) {
-            return ResponseEntity.notFound().build();
-        }
-
-        Owner owner = optionalOwner.get();
+    public Owner update(String id, UpdateOwnerData data) {
+        Owner owner = ownerRepository.findById(id)
+                .orElseThrow(() -> new OwnerNotFoundException("Proprietário não foi encontrado no sistema " + id));
 
         List<Property> properties = null;
         if (data.propertiesId() != null) {
-            properties = propertyRepository.findAllById(data.propertiesId());
-            if (properties.size() != data.propertiesId().size()) {
-                return ResponseEntity.notFound().build();
-            }
+           properties = propertyService.findAllByIds(data.propertiesId());
         }
 
         owner.updateValues(data, properties);
-        ownerRepository.save(owner);
 
-        return ResponseEntity.ok(owner);
+        return ownerRepository.save(owner);
     }
 
     @Transactional
