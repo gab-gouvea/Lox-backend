@@ -71,34 +71,23 @@ public class PropertyService {
     }
 
     //@Transactional(readOnly = true)
-    public ResponseEntity<Property> findById(String id) {
+    public Property findById(String id) {
         return propertyRepository.findById(id)
-                .map(ResponseEntity::ok) // .map(p -> ResponseEntity.ok(p))
-                .orElseGet(() -> ResponseEntity.notFound().build());
+                .orElseThrow(() -> new PropertyNotFoundException("Propriedade não foi encontrada no sistema " + id));
     }
 
     @Transactional
-    public ResponseEntity<Property> update(String id ,UpdatePropertyData data) {
-        Optional<Property> optionalProperty = propertyRepository.findById(id);
-
-        if (optionalProperty.isEmpty()) {
-            return ResponseEntity.notFound().build();
-        }
-
-        Property property = optionalProperty.get();
+    public Property update(String id ,UpdatePropertyData data) {
+        Property property = propertyRepository.findById(id)
+                .orElseThrow(() -> new PropertyNotFoundException("Propriedade não foi encontrada no sistema " + id));
 
         List<Component> components = null;
         if (data.componentsId() != null) {
-            components = componentRepository.findAllById(data.componentsId());
-            if (components.size() != data.componentsId().size()) {
-                return ResponseEntity.notFound().build();
-            }
+            components = componentService.findAllByIds(data.componentsId());
         }
 
         property.updateValues(data, components);
-        propertyRepository.save(property);
-
-        return ResponseEntity.ok(property);
+        return propertyRepository.save(property);
     }
 
     @Transactional

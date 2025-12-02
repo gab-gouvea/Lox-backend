@@ -5,17 +5,14 @@ import br.com.lox.domain.owner.dto.UpdateOwnerData;
 import br.com.lox.domain.owner.entity.Owner;
 import br.com.lox.domain.owner.repository.OwnerRepository;
 import br.com.lox.domain.property.entity.Property;
-import br.com.lox.domain.property.repository.PropertyRepository;
 import br.com.lox.domain.property.service.PropertyService;
 import br.com.lox.exceptions.BusinessRuleException;
 import br.com.lox.exceptions.OwnerNotFoundException;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.Optional;
+
 
 @Service
 public class OwnerService {
@@ -23,7 +20,7 @@ public class OwnerService {
     private final OwnerRepository ownerRepository;
     private final PropertyService propertyService;
 
-    public OwnerService(OwnerRepository ownerRepository, PropertyRepository propertyRepository, PropertyService propertyService) {
+    public OwnerService(OwnerRepository ownerRepository, PropertyService propertyService) {
         this.ownerRepository = ownerRepository;
         this.propertyService = propertyService;
     }
@@ -60,7 +57,7 @@ public class OwnerService {
 
         List<Property> properties = null;
         if (data.propertiesId() != null) {
-           properties = propertyService.findAllByIds(data.propertiesId());
+           properties = propertyService.findAllByIds(data.propertiesId()); //validação acontece la no service de property
         }
 
         owner.updateValues(data, properties);
@@ -69,16 +66,10 @@ public class OwnerService {
     }
 
     @Transactional
-    public ResponseEntity<Void> deleteById(String id) {
-        Optional<Owner> optionalOwner = ownerRepository.findById(id);
+    public void deleteById(String id) {
+        Owner owner = ownerRepository.findById(id)
+                        .orElseThrow(() -> new OwnerNotFoundException("Proprietário não foi encontrado no sistema " + id));
 
-        if (optionalOwner.isEmpty()) {
-            return ResponseEntity.notFound().build();
-        }
-
-        Owner owner = optionalOwner.get();
         ownerRepository.delete(owner);
-
-        return ResponseEntity.noContent().build();
     }
 }

@@ -6,6 +6,7 @@ import br.com.lox.domain.owner.dto.UpdateOwnerData;
 import br.com.lox.domain.owner.entity.Owner;
 import br.com.lox.domain.owner.service.OwnerService;
 import jakarta.validation.Valid;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -23,26 +24,31 @@ public class OwnerController {
 
     @PostMapping
     public ResponseEntity<Owner> save(@RequestBody @Valid CreateOwnerData data) {
-        return ownerService.create(data);
+        Owner owner = ownerService.create(data);
+        return ResponseEntity.status(HttpStatus.CREATED).body(owner);
     }
 
     @GetMapping
-    public List<Owner> findAll() {
-        return ownerService.findAll();
+    public ResponseEntity<List<Owner>> findAll() {
+       List<Owner> owners = ownerService.findAll();
+       return ResponseEntity.ok(owners);
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<Owner> findById(@PathVariable String id) {
-        return ownerService.findById(id);
+        Owner owner = ownerService.findById(id);
+        return ResponseEntity.ok(owner);
     }
 
     @PutMapping("/{id}")
     public ResponseEntity<Owner> update(@PathVariable String id, @RequestBody @Valid UpdateOwnerData data) {
-        return ownerService.update(id, data);
+        Owner owner = ownerService.update(id, data);
+        return ResponseEntity.ok(owner);
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteById(@PathVariable String id) {
-        return  ownerService.deleteById(id);
+        ownerService.deleteById(id);
+        return ResponseEntity.noContent().build();
     }
 }
