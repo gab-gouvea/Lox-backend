@@ -92,14 +92,9 @@ public class PropertyService {
 
     @Transactional
     public ResponseEntity<Void> deleteById(String id) {
-        Optional<Property> optionalProperty = propertyRepository.findById(id);
+        Property property = propertyRepository.findById(id)
+                .orElseThrow(() -> new PropertyNotFoundException("Propriedade não foi encontrada no sistema " + id));
 
-        if (optionalProperty.isEmpty()) {
-            return ResponseEntity.notFound().build();
-        }
-
-        Property property = optionalProperty.get();
         propertyRepository.delete(property);
-        return ResponseEntity.noContent().build();
     }
 }

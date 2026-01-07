@@ -9,7 +9,6 @@ import jakarta.persistence.Id;
 import java.time.LocalDateTime;
 
 @Entity
-
 public class CheckIn {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)

@@ -22,7 +22,7 @@ public class PropertyController {
 
     @PostMapping
     public ResponseEntity<Property> create(@RequestBody @Valid CreatePropertyData data) {
-        return propertyService.create(data);
+        propertyService.create(data);
     }
 
     @GetMapping
