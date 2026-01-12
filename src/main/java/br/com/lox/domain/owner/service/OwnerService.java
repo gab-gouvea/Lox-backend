@@ -5,9 +5,11 @@ import br.com.lox.domain.owner.dto.UpdateOwnerData;
 import br.com.lox.domain.owner.entity.Owner;
 import br.com.lox.domain.owner.repository.OwnerRepository;
 import br.com.lox.domain.property.entity.Property;
+import br.com.lox.domain.property.repository.PropertyRepository;
 import br.com.lox.domain.property.service.PropertyService;
 import br.com.lox.exceptions.BusinessRuleException;
 import br.com.lox.exceptions.OwnerNotFoundException;
+import br.com.lox.exceptions.PropertyNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -18,11 +20,11 @@ import java.util.List;
 public class OwnerService {
 
     private final OwnerRepository ownerRepository;
-    private final PropertyService propertyService;
+    private final PropertyRepository propertyRepository;
 
-    public OwnerService(OwnerRepository ownerRepository, PropertyService propertyService) {
+    public OwnerService(OwnerRepository ownerRepository, PropertyRepository propertyRepository) {
         this.ownerRepository = ownerRepository;
-        this.propertyService = propertyService;
+        this.propertyRepository = propertyRepository;
     }
 
     @Transactional
@@ -57,7 +59,11 @@ public class OwnerService {
 
         List<Property> properties = null;
         if (data.propertiesId() != null) {
-           properties = propertyService.findAllByIds(data.propertiesId()); //validação acontece la no service de property
+           properties = propertyRepository.findAllById(data.propertiesId());
+
+           if (properties.size() != data.propertiesId().size()) {
+               throw new PropertyNotFoundException("Uma ou mais propriedades não foram encontradas no sistema" + data.propertiesId());
+           }
         }
 
         owner.updateValues(data, properties);

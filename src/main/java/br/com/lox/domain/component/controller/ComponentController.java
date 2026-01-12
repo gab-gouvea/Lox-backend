@@ -5,6 +5,7 @@ import br.com.lox.domain.component.dto.UpdateComponentData;
 import br.com.lox.domain.component.entity.Component;
 import br.com.lox.domain.component.service.ComponentService;
 import jakarta.validation.Valid;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -22,7 +23,8 @@ public class ComponentController {
 
     @PostMapping
     public ResponseEntity<Component> create(@RequestBody @Valid CreateComponentData data) {
-        return componentService.create(data);
+        Component component = componentService.create(data);
+        return ResponseEntity.status(HttpStatus.CREATED).body(component);
     }
 
     @GetMapping
@@ -32,16 +34,19 @@ public class ComponentController {
 
     @GetMapping("/{id}")
     public ResponseEntity<Component> findById(@PathVariable String id) {
-        return componentService.findById(id);
+        Component component = componentService.findById(id);
+        return ResponseEntity.ok(component);
     }
 
     @PutMapping("/{id}")
     public ResponseEntity<Component> update(@PathVariable String id, @RequestBody @Valid UpdateComponentData data) {
-        return  componentService.update(id, data);
+        Component component = componentService.update(id, data);
+        return ResponseEntity.ok(component);
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteById(@PathVariable String id) {
-        return componentService.deleteById(id);
+         componentService.deleteById(id);
+         return ResponseEntity.noContent().build();
     }
 }

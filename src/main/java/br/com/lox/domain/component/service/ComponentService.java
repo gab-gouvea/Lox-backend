@@ -4,17 +4,12 @@ import br.com.lox.domain.component.dto.CreateComponentData;
 import br.com.lox.domain.component.dto.UpdateComponentData;
 import br.com.lox.domain.component.entity.Component;
 import br.com.lox.domain.component.repository.ComponentRepository;
-import br.com.lox.domain.property.service.PropertyService;
+import br.com.lox.exceptions.BusinessRuleException;
 import br.com.lox.exceptions.ComponentNotFoundException;
 import jakarta.validation.Valid;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 @Service
 public class ComponentService {
@@ -26,9 +21,9 @@ public class ComponentService {
     }
 
     @Transactional
-    public ResponseEntity<Component> create(@Valid CreateComponentData data) {
+    public Component create(@Valid CreateComponentData data) {
         if (componentRepository.existsByName(data.name())) {
-            return ResponseEntity.status(HttpStatus.CONFLICT).build();
+            throw new BusinessRuleException("Componente já cadastrado com o nome " + data.name());
         }
 
         var entity = new Component(
@@ -40,56 +35,33 @@ public class ComponentService {
                 data.notes()
         );
 
-        componentRepository.save(entity);
-        return ResponseEntity.status(HttpStatus.CREATED).body(entity);
+        return componentRepository.save(entity);
     }
 
     public List<Component> findAll() {
         return componentRepository.findAll();
     }
 
-    public List<Component> findAllByIds(List<String> ids) {
-        List<Component> components = componentRepository.findAllById(ids);
-
-        if (components.size() != ids.size()) {
-            throw new ComponentNotFoundException("Um ou mais componentes não foram encontrados: " + ids);
-        }
-
-        return components;
-    }
-
-    public ResponseEntity<Component> findById(String id) {
+    public Component findById(String id) {
         return componentRepository.findById(id)
-                .map(ResponseEntity::ok)
-                .orElseGet(() -> ResponseEntity.notFound().build());
+                .orElseThrow(() -> new ComponentNotFoundException("Componente não encontrado no sistema " + id));
     }
 
     @Transactional
-    public ResponseEntity<Component> update(String id, UpdateComponentData data) {
-        Optional<Component> optionalComponent = componentRepository.findById(id);
+    public Component update(String id, UpdateComponentData data) {
+        Component component = componentRepository.findById(id)
+                .orElseThrow(() -> new ComponentNotFoundException("Componente não foi encontrado no sistema " + id));
 
-        if (optionalComponent.isEmpty()) {
-            return ResponseEntity.notFound().build();
-        }
-
-        Component component = optionalComponent.get();
         component.updateValues(data);
 
-        componentRepository.save(component);
-        return ResponseEntity.ok(component);
+        return componentRepository.save(component);
     }
 
     @Transactional
-    public ResponseEntity<Void> deleteById(String id) {
-        Optional<Component> optionalComponent = componentRepository.findById(id);
-
-        if (optionalComponent.isEmpty()) {
-            return ResponseEntity.notFound().build();
-        }
-
-        Component component = optionalComponent.get();
+    public void deleteById(String id) {
+        Component component = componentRepository.findById(id)
+                .orElseThrow(() -> new ComponentNotFoundException("Componente não encontrado no sistema " + id));
 
         componentRepository.delete(component);
-        return ResponseEntity.noContent().build();
     }
 }

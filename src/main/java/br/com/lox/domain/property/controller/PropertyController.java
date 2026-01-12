@@ -5,6 +5,7 @@ import br.com.lox.domain.property.dto.UpdatePropertyData;
 import br.com.lox.domain.property.entity.Property;
 import br.com.lox.domain.property.service.PropertyService;
 import jakarta.validation.Valid;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -22,26 +23,31 @@ public class PropertyController {
 
     @PostMapping
     public ResponseEntity<Property> create(@RequestBody @Valid CreatePropertyData data) {
-        propertyService.create(data);
+        Property property = propertyService.create(data);
+        return ResponseEntity.status(HttpStatus.CREATED).body(property);
     }
 
     @GetMapping
-    public List<Property> findAll() {
-        return propertyService.findAll();
+    public ResponseEntity<List<Property>> findAll() {
+        List<Property> properties = propertyService.findAll();
+        return ResponseEntity.ok(properties);
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<Property> findById(@PathVariable String id) {
-        return propertyService.findById(id);
+        Property property = propertyService.findById(id);
+        return ResponseEntity.ok(property);
     }
 
     @PutMapping("/{id}")
     public ResponseEntity<Property> update(@PathVariable String id, @RequestBody UpdatePropertyData data) {
-        return propertyService.update(id, data);
+       Property property = propertyService.update(id, data);
+       return ResponseEntity.ok(property);
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteById(@PathVariable String id) {
-        return propertyService.deleteById(id);
+        propertyService.deleteById(id);
+        return ResponseEntity.noContent().build();
     }
 }

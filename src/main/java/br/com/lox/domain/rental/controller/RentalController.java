@@ -5,6 +5,7 @@ import br.com.lox.domain.rental.dto.UpdateRentalData;
 import br.com.lox.domain.rental.entity.Rental;
 import br.com.lox.domain.rental.service.RentalService;
 import jakarta.validation.Valid;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -22,7 +23,8 @@ public class RentalController {
 
     @PostMapping
     public ResponseEntity<Rental> create(@RequestBody @Valid CreateRentalData data) {
-        return rentalService.create(data);
+        Rental rental = rentalService.create(data);
+        return ResponseEntity.status(HttpStatus.CREATED).body(rental);
     }
 
     @GetMapping
@@ -32,16 +34,19 @@ public class RentalController {
 
     @GetMapping("/{id}")
     public ResponseEntity<Rental> findById(@PathVariable String id) {
-        return rentalService.findById(id);
+        Rental rental =  rentalService.findById(id);
+        return ResponseEntity.ok(rental);
     }
 
     @PutMapping("/{id}")
     public ResponseEntity<Rental> update(@PathVariable String id, @RequestBody @Valid UpdateRentalData data) {
-        return rentalService.update(id, data);
+        Rental rental =  rentalService.update(id, data);
+        return ResponseEntity.ok(rental);
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteById(@PathVariable String id) {
-        return rentalService.deleteById(id);
+        rentalService.deleteById(id);
+        return ResponseEntity.noContent().build();
     }
 }

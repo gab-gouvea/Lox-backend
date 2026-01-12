@@ -12,7 +12,7 @@ import java.util.stream.Collectors;
 @RestControllerAdvice
 public class GlobalHandlerException {
 
-    @ExceptionHandler({OwnerNotFoundException.class, PropertyNotFoundException.class})
+    @ExceptionHandler({OwnerNotFoundException.class, PropertyNotFoundException.class, ComponentNotFoundException.class, RentalNotFoundException.class})
     public ResponseEntity<ErrorResponse> handleNotFoundExceptions(RuntimeException e) {
         ErrorResponse errorResponse = new ErrorResponse(
                 HttpStatus.NOT_FOUND,

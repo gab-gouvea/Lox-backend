@@ -3,43 +3,44 @@ package br.com.lox.domain.property.service;
 
 import br.com.lox.domain.component.entity.Component;
 import br.com.lox.domain.component.repository.ComponentRepository;
-import br.com.lox.domain.component.service.ComponentService;
 import br.com.lox.domain.owner.entity.Owner;
 import br.com.lox.domain.owner.repository.OwnerRepository;
-import br.com.lox.domain.owner.service.OwnerService;
 import br.com.lox.domain.property.dto.CreatePropertyData;
 import br.com.lox.domain.property.dto.UpdatePropertyData;
 import br.com.lox.domain.property.entity.Property;
 import br.com.lox.domain.property.repository.PropertyRepository;
 import br.com.lox.exceptions.ComponentNotFoundException;
+import br.com.lox.exceptions.OwnerNotFoundException;
 import br.com.lox.exceptions.PropertyNotFoundException;
 import jakarta.validation.Valid;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.Optional;
 
 @Service
 public class PropertyService {
 
     private final PropertyRepository propertyRepository;
-    private final ComponentService componentService;
-    private final OwnerService ownerService;
+    private final ComponentRepository componentRepository;
+    private final OwnerRepository ownerRepository;
 
-    public PropertyService(PropertyRepository propertyRepository, ComponentRepository componentRepository, OwnerRepository ownerRepository, ComponentService componentService, OwnerService ownerService) {
+    public PropertyService(PropertyRepository propertyRepository, ComponentRepository componentRepository, OwnerRepository ownerRepository) {
         this.propertyRepository = propertyRepository;
-        this.componentService = componentService;
-        this.ownerService = ownerService;
+        this.componentRepository = componentRepository;
+        this.ownerRepository = ownerRepository;
     }
 
     @Transactional
     public Property create(@Valid CreatePropertyData data) {
-        List<Component> components = componentService.findAllByIds(data.componentsId());
+        List<Component> components = componentRepository.findAllById(data.componentsId());
 
-        Owner owner = ownerService.findById(data.ownerId());
+        if (components.size() != data.componentsId().size()) {
+            throw new ComponentNotFoundException("Um ou mais componentes não foram encontrados: " + data.componentsId());
+        }
+
+        Owner owner = ownerRepository.findById(data.ownerId())
+                .orElseThrow(() -> new OwnerNotFoundException(data.ownerId()));
 
         var entity = new Property(
                 data.title(),
@@ -60,16 +61,6 @@ public class PropertyService {
         return propertyRepository.findAll();
     }
 
-    public List<Property> findAllByIds(List<String> ids) {
-        List<Property> properties = propertyRepository.findAllById(ids);
-
-        if (properties.size() != ids.size()) {
-            throw new PropertyNotFoundException("Um ou mais propriedades não foram encontradas: " + ids);
-        }
-
-        return properties;
-    }
-
     //@Transactional(readOnly = true)
     public Property findById(String id) {
         return propertyRepository.findById(id)
@@ -83,7 +74,11 @@ public class PropertyService {
 
         List<Component> components = null;
         if (data.componentsId() != null) {
-            components = componentService.findAllByIds(data.componentsId());
+            components = componentRepository.findAllById(data.componentsId());
+
+            if (components.size() != data.componentsId().size()) {
+                throw new ComponentNotFoundException("Um ou mais componentes não foram encontrados: " + data.componentsId());
+            }
         }
 
         property.updateValues(data, components);
@@ -91,7 +86,7 @@ public class PropertyService {
     }
 
     @Transactional
-    public ResponseEntity<Void> deleteById(String id) {
+    public void deleteById(String id) {
         Property property = propertyRepository.findById(id)
                 .orElseThrow(() -> new PropertyNotFoundException("Propriedade não foi encontrada no sistema " + id));
 

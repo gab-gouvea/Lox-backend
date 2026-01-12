@@ -8,6 +8,10 @@ import br.com.lox.domain.rental.dto.CreateRentalData;
 import br.com.lox.domain.rental.dto.UpdateRentalData;
 import br.com.lox.domain.rental.entity.Rental;
 import br.com.lox.domain.rental.repository.RentalRepository;
+import br.com.lox.exceptions.BusinessRuleException;
+import br.com.lox.exceptions.InventoryNotFoundException;
+import br.com.lox.exceptions.PropertyNotFoundException;
+import br.com.lox.exceptions.RentalNotFoundException;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -30,12 +34,9 @@ public class RentalService {
     }
 
     @Transactional
-    public ResponseEntity<Rental> create(@Valid CreateRentalData data) {
-        if (!propertyRepository.existsById(data.propertyId())) {
-            return ResponseEntity.notFound().build();
-        }
-
-        Property property = propertyRepository.getReferenceById(data.propertyId());
+    public Rental create(@Valid CreateRentalData data) {
+        Property property = propertyRepository.findById(data.propertyId())
+                .orElseThrow(() -> new PropertyNotFoundException("Propriedade não encontrada no sistema."));
 
         var entity = new Rental(
                 data.tenantName(),
@@ -46,66 +47,44 @@ public class RentalService {
                 data.checkin()
         );
 
-        rentalRepository.save(entity);
-        return ResponseEntity.ok(entity);
+        return rentalRepository.save(entity);
     }
 
     public List<Rental> findAll() {
         return rentalRepository.findAll();
     }
 
-    public ResponseEntity<Rental> findById(String id) {
+    public Rental findById(String id) {
         return rentalRepository.findById(id)
-                .map(ResponseEntity::ok)
-                .orElseGet(() -> ResponseEntity.notFound().build());
+                .orElseThrow(() -> new RentalNotFoundException("Reserva não encontrada no sistema." + id));
     }
 
     @Transactional
-    public ResponseEntity<Rental> update(String id, UpdateRentalData data) {
-        Optional<Rental> optionalRental = rentalRepository.findById(id);
-
-        if (optionalRental.isEmpty()) {
-            return ResponseEntity.notFound().build();
-        }
-
-        Rental rental = optionalRental.get();
+    public Rental update(String id, UpdateRentalData data) {
+        Rental rental = rentalRepository.findById(id)
+                .orElseThrow(() -> new RentalNotFoundException("Reserva não encontrada no sistema." + id));
 
         Inventory inventory = null;
         Property property = null;
-
         if (data.inventoryId() != null) {
-            Optional<Inventory> optionalInventory = inventoryRepository.findById(data.inventoryId());
-            if (optionalInventory.isEmpty()) {
-                return ResponseEntity.notFound().build();
-            }
-            inventory = optionalInventory.get();
+            inventory = inventoryRepository.findById(data.inventoryId())
+                    .orElseThrow(() -> new InventoryNotFoundException("Inventário não encontrado no sistema." + data.inventoryId()));
         }
 
         if (data.propertyId() != null) {
-            Optional<Property> optionalProperty = propertyRepository.findById(data.propertyId());
-            if (optionalProperty.isEmpty()) {
-                return ResponseEntity.notFound().build();
-            }
-            property = optionalProperty.get();
+           property = propertyRepository.findById(data.propertyId())
+                   .orElseThrow(() -> new PropertyNotFoundException("Propriedade não foi encontrada no sistema." + data.propertyId()));
         }
 
         rental.updateValues(inventory, property, data);
-        rentalRepository.save(rental);
-
-        return ResponseEntity.ok(rental);
+        return rentalRepository.save(rental);
     }
 
     @Transactional
-    public ResponseEntity<Void> deleteById(String id) {
-        Optional<Rental> optionalRental = rentalRepository.findById(id);
+    public void deleteById(String id) {
+        Rental rental = rentalRepository.findById(id)
+                        .orElseThrow(() -> new RentalNotFoundException("Reserva não encontrada no sistema." + id));
 
-        if (optionalRental.isEmpty()) {
-            return ResponseEntity.notFound().build();
-        }
-
-        Rental rental = optionalRental.get();
         rentalRepository.delete(rental);
-
-        return ResponseEntity.notFound().build();
     }
 }
