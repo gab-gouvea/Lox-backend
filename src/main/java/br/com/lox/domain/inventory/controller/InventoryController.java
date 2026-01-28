@@ -1,9 +1,12 @@
 package br.com.lox.domain.inventory.controller;
 
+import br.com.lox.domain.inventory.dto.AddItemsData;
 import br.com.lox.domain.inventory.dto.CreateInventoryData;
+import br.com.lox.domain.inventory.dto.UpdateInventoryData;
 import br.com.lox.domain.inventory.entity.Inventory;
 import br.com.lox.domain.inventory.service.InventoryService;
 import jakarta.validation.Valid;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -21,7 +24,8 @@ public class InventoryController {
 
     @PostMapping
     public ResponseEntity<Inventory> create(@RequestBody @Valid CreateInventoryData data) {
-        return inventoryService.create(data);
+        Inventory inventory = inventoryService.create(data);
+        return ResponseEntity.status(HttpStatus.CREATED).body(inventory);
     }
 
     @GetMapping
@@ -31,16 +35,25 @@ public class InventoryController {
 
     @GetMapping("/{id}")
     public ResponseEntity<Inventory> findById(@PathVariable String id) {
-        return inventoryService.findById(id);
+       Inventory inventory = inventoryService.findById(id);
+       return ResponseEntity.ok(inventory);
     }
 
-//    @PutMapping("/{id}")
-//    public ResponseEntity<Inventory> update(@PathVariable String id, @RequestBody UpdateInventoryData data) {
-//        return inventoryService.update(id, data);
-//    }
+    @PutMapping("/{id}")
+    public ResponseEntity<Inventory> update(@PathVariable String id, @RequestBody @Valid UpdateInventoryData data) {
+        Inventory inventory = inventoryService.update(id, data);
+        return ResponseEntity.ok(inventory);
+    }
+
+    @PatchMapping("/{id}")
+    public ResponseEntity<Inventory> addItem(@PathVariable String id, @RequestBody @Valid AddItemsData data) {
+        Inventory inventory = inventoryService.addItems(id, data);
+        return ResponseEntity.ok(inventory);
+    }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteById(@PathVariable String id) {
-        return inventoryService.deleteById(id);
+        inventoryService.deleteById(id);
+        return ResponseEntity.noContent().build();
     }
 }

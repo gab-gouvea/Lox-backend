@@ -7,8 +7,6 @@ import java.time.LocalDate;
 import java.util.List;
 
 public record CreateInventoryData(
-        @NotNull List<String> itemsId,
-        @NotNull LocalDate date,
         @NotBlank String responsible
 ) {
 }

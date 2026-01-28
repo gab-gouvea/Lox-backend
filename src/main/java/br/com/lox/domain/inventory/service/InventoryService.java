@@ -1,16 +1,18 @@
 package br.com.lox.domain.inventory.service;
 
+import br.com.lox.domain.inventory.dto.AddItemsData;
 import br.com.lox.domain.inventory.dto.CreateInventoryData;
+import br.com.lox.domain.inventory.dto.UpdateInventoryData;
 import br.com.lox.domain.inventory.entity.Inventory;
 import br.com.lox.domain.inventory.repository.InventoryRepository;
 import br.com.lox.domain.item.entity.Item;
 import br.com.lox.domain.item.repository.ItemRepository;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+import br.com.lox.exceptions.InventoryNotFoundException;
+import br.com.lox.exceptions.ItemNotFoundException;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.Optional;
 
 @Service
 public class InventoryService {
@@ -23,45 +25,63 @@ public class InventoryService {
         this.itemRepository = itemRepository;
     }
 
-    public ResponseEntity<Inventory> create(CreateInventoryData data) {
-        List<Item> items = itemRepository.findAllById(data.itemsId());
-
-        if (items.size() != data.itemsId().size()) {
-            return ResponseEntity.notFound().build();
-        }
-
+    @Transactional
+    public Inventory create(CreateInventoryData data) {
         var entity = new Inventory(
-                items,
-                data.date(),
                 data.responsible()
         );
 
-        inventoryRepository.save(entity);
-        return ResponseEntity.status(HttpStatus.CREATED).body(entity);
+        return inventoryRepository.save(entity);
     }
 
     public List<Inventory> findAll() {
         return inventoryRepository.findAll();
     }
 
-    public ResponseEntity<Inventory> findById(String id) {
+    public Inventory findById(String id) {
         return inventoryRepository.findById(id)
-                .map(ResponseEntity::ok)
-                .orElseGet(() -> ResponseEntity.notFound().build());
+                .orElseThrow(() -> new InventoryNotFoundException("Inventário não encontrado no sistema: " + id));
     }
 
-//    public ResponseEntity<Inventory> update(String id, UpdateInventoryData data) {}
+    @Transactional
+    public Inventory update(String id, UpdateInventoryData data) {
+        Inventory inventory = inventoryRepository.findById(id)
+                .orElseThrow(() -> new InventoryNotFoundException(("Inventário não encontrado no sistema: " + id)));
 
-    public ResponseEntity<Void> deleteById(String id) {
-        Optional<Inventory> optionalInventory = inventoryRepository.findById(id);
+        List<Item> items = itemRepository.findAllById(data.itemsId());
 
-        if (optionalInventory.isEmpty()) {
-            return ResponseEntity.notFound().build();
+        if (items.size() != data.itemsId().size()) {
+            throw new ItemNotFoundException("Um ou mais itens não foram encontrados no sistema");
         }
 
-        Inventory inventory = optionalInventory.get();
-        inventoryRepository.delete(inventory);
+        inventory.newItems(items);
+        return inventoryRepository.save(inventory);
+    }
 
-        return ResponseEntity.noContent().build();
+    @Transactional
+    public Inventory addItems(String id, AddItemsData data) {
+        Inventory inventory = inventoryRepository.findById(id)
+                .orElseThrow(() -> new InventoryNotFoundException("Inventário não encontrado no sistema: " + id));
+
+        List<Item> items = itemRepository.findAllById(data.itemsId());
+
+        if (items.size() != data.itemsId().size()) {
+            throw new ItemNotFoundException("Um ou mais itens não foram encontrados no sistema");
+        }
+
+        for (Item item : items) {
+            inventory.addItem(item);
+        }
+
+        return inventoryRepository.save(inventory);
+    }
+
+
+    @Transactional
+    public void deleteById(String id) {
+        Inventory inventory = inventoryRepository.findById(id)
+                        .orElseThrow(() -> new InventoryNotFoundException("Inventário não encontrado no sistema: " + id));
+
+        inventoryRepository.delete(inventory);
     }
 }

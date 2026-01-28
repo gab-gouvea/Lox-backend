@@ -5,6 +5,7 @@ import br.com.lox.domain.category.dto.UpdateCategoryData;
 import br.com.lox.domain.category.entity.Category;
 import br.com.lox.domain.category.service.CategoryService;
 import jakarta.validation.Valid;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -22,7 +23,8 @@ public class CategoryController {
 
     @PostMapping
     public ResponseEntity<Category> create(@RequestBody @Valid CreateCategoryData data) {
-        return categoryService.create(data);
+        Category category = categoryService.create(data);
+        return ResponseEntity.status(HttpStatus.CREATED).body(category);
     }
 
     @GetMapping
@@ -32,16 +34,19 @@ public class CategoryController {
 
     @GetMapping("/{id}")
     public ResponseEntity<Category> findById(@PathVariable String id) {
-        return categoryService.findById(id);
+        Category category = categoryService.findById(id);
+        return ResponseEntity.ok().body(category);
     }
 
     @PutMapping("/{id}")
     public ResponseEntity<Category> update(@PathVariable String id, @RequestBody @Valid UpdateCategoryData data) {
-        return categoryService.update(id, data);
+        Category category = categoryService.update(id, data);
+        return ResponseEntity.ok().body(category);
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteById(@PathVariable String id) {
-        return categoryService.deleteById(id);
+         categoryService.deleteById(id);
+         return ResponseEntity.noContent().build();
     }
 }

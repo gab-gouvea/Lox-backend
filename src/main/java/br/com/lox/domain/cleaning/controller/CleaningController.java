@@ -6,6 +6,7 @@ import br.com.lox.domain.cleaning.entity.Cleaning;
 import br.com.lox.domain.cleaning.service.CleaningService;
 
 import jakarta.validation.Valid;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -23,7 +24,8 @@ public class CleaningController {
 
     @PostMapping
     public ResponseEntity<Cleaning> create(@RequestBody @Valid CreateCleaningData data) {
-        return cleaningService.create(data);
+        Cleaning cleaning =  cleaningService.create(data);
+        return ResponseEntity.status(HttpStatus.CREATED).body(cleaning);
     }
 
     @GetMapping
@@ -33,16 +35,19 @@ public class CleaningController {
 
     @GetMapping("/{id}")
     public ResponseEntity<Cleaning> findById(@PathVariable String id) {
-        return cleaningService.findById(id);
+        Cleaning cleaning = cleaningService.findById(id);
+        return ResponseEntity.ok().body(cleaning);
     }
 
     @PutMapping("/{id}")
     public ResponseEntity<Cleaning> update(@PathVariable String id, @RequestBody UpdateCleaningData data) {
-        return cleaningService.update(id, data);
+        Cleaning cleaning = cleaningService.update(id, data);
+        return ResponseEntity.ok().body(cleaning);
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteById(@PathVariable String id) {
-        return cleaningService.deleteById(id);
+        cleaningService.deleteById(id);
+        return ResponseEntity.noContent().build();
     }
 }

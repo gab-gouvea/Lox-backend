@@ -6,6 +6,8 @@ import br.com.lox.domain.cleaning.entity.Cleaning;
 import br.com.lox.domain.cleaning.repository.CleaningRepository;
 import br.com.lox.domain.rental.entity.Rental;
 import br.com.lox.domain.rental.repository.RentalRepository;
+import br.com.lox.exceptions.CleaningNotFoundException;
+import br.com.lox.exceptions.RentalNotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -26,12 +28,9 @@ public class CleaningService {
     }
 
     @Transactional
-    public ResponseEntity<Cleaning> create(CreateCleaningData data) {
-        if (!rentalRepository.existsById(data.rentalId())) {
-            return ResponseEntity.notFound().build();
-        }
-
-        Rental rental = rentalRepository.getReferenceById(data.rentalId());
+    public Cleaning create(CreateCleaningData data) {
+        Rental rental = rentalRepository.findById(data.rentalId())
+                .orElseThrow(() -> new RentalNotFoundException("Reserva não encontrada no sistema: " + data.rentalId()));
 
         var entity = new Cleaning(
                 rental,
@@ -42,56 +41,39 @@ public class CleaningService {
                 data.notes()
         );
 
-        cleaningRepository.save(entity);
-        return ResponseEntity.status(HttpStatus.CREATED).body(entity);
+        return  cleaningRepository.save(entity);
+
     }
 
     public List<Cleaning> findAll() {
         return cleaningRepository.findAll();
     }
 
-    public ResponseEntity<Cleaning> findById(String id) {
+    public Cleaning findById(String id) {
         return cleaningRepository.findById(id)
-                .map(ResponseEntity::ok)
-                .orElseGet(() -> ResponseEntity.notFound().build());
+                .orElseThrow(() -> new CleaningNotFoundException("Faxina não encontrada no sistema: " + id));
     }
 
     @Transactional
-    public ResponseEntity<Cleaning> update(String id, UpdateCleaningData data) {
-        Optional<Cleaning> optionalCleaning = cleaningRepository.findById(id);
+    public Cleaning update(String id, UpdateCleaningData data) {
+        Cleaning cleaning = cleaningRepository.findById(id)
+                .orElseThrow(() -> new CleaningNotFoundException("Faxina não encontrada no sistema: " + id));
 
-        if (optionalCleaning.isEmpty()) {
-            return ResponseEntity.notFound().build();
-        }
-
-        Cleaning cleaning = optionalCleaning.get();
         Rental rental = null;
-
         if (data.rentalId() != null) {
-            Optional<Rental> optionalRental = rentalRepository.findById(data.rentalId());
-            if (optionalRental.isEmpty()) {
-                return ResponseEntity.notFound().build();
+            rental = rentalRepository.findById(data.rentalId())
+                    .orElseThrow(() -> new CleaningNotFoundException("Faxina não encontrada no sistema: " + data.rentalId()));
             }
-            rental = optionalRental.get();
-        }
 
         cleaning.updateValues(rental, data);
-        cleaningRepository.save(cleaning);
-
-        return ResponseEntity.ok(cleaning);
+        return cleaningRepository.save(cleaning);
     }
 
     @Transactional
-    public ResponseEntity<Void> deleteById(String id) {
-        Optional<Cleaning> optionalCleaning = cleaningRepository.findById(id);
+    public void deleteById(String id) {
+        Cleaning cleaning = cleaningRepository.findById(id)
+                        .orElseThrow(() -> new CleaningNotFoundException("Faxina não encontrada no sistema: " + id));
 
-        if (optionalCleaning.isEmpty()) {
-            return ResponseEntity.notFound().build();
-        }
-
-        Cleaning cleaning = optionalCleaning.get();
         cleaningRepository.delete(cleaning);
-
-        return ResponseEntity.noContent().build();
     }
 }

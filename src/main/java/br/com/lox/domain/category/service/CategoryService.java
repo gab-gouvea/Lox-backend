@@ -4,6 +4,8 @@ import br.com.lox.domain.category.dto.CreateCategoryData;
 import br.com.lox.domain.category.dto.UpdateCategoryData;
 import br.com.lox.domain.category.entity.Category;
 import br.com.lox.domain.category.repository.CategoryRepository;
+import br.com.lox.exceptions.BusinessRuleException;
+import br.com.lox.exceptions.CategoryNotFoundException;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -23,9 +25,9 @@ public class CategoryService {
     }
 
     @Transactional
-    public ResponseEntity<Category> create(@Valid CreateCategoryData data) {
-        if (!categoryRepository.existsByName(data.name()) || !categoryRepository.existsByColor(data.color())) {
-            return ResponseEntity.status(HttpStatus.CONFLICT).build();
+    public Category create(@Valid CreateCategoryData data) {
+        if (categoryRepository.existsByName(data.name()) || categoryRepository.existsByColor(data.color())) {
+            throw new BusinessRuleException("Nome ou cor já de categoria já existem no sistema.");
         }
 
         var entity = new Category(
@@ -33,51 +35,36 @@ public class CategoryService {
                 data.color()
         );
 
-        categoryRepository.save(entity);
-        return ResponseEntity.status(HttpStatus.CREATED).body(entity);
+        return categoryRepository.save(entity);
     }
 
     public List<Category> findAll() {
         return categoryRepository.findAll();
     }
 
-    public ResponseEntity<Category> findById(String id) {
+    public Category findById(String id) {
         return categoryRepository.findById(id)
-                .map(ResponseEntity::ok)
-                .orElseGet(() -> ResponseEntity.notFound().build());
+                .orElseThrow(() -> new CategoryNotFoundException("Categoria não encontrada no sistema: " + id));
     }
 
     @Transactional
-    public ResponseEntity<Category> update(String id, @Valid UpdateCategoryData data) {
-        Optional<Category> optionalCategory = categoryRepository.findById(id);
-
-        if (optionalCategory.isEmpty()) {
-            return ResponseEntity.notFound().build();
-        }
-
-        Category category = optionalCategory.get();
+    public Category update(String id, @Valid UpdateCategoryData data) {
+        Category category = categoryRepository.findById(id)
+                .orElseThrow(() -> new CategoryNotFoundException("Categoria não encontrada no sistema: " + id));
 
         if (!categoryRepository.existsByName(data.name()) || !categoryRepository.existsByColor(data.color())) {
-            return ResponseEntity.status(HttpStatus.CONFLICT).build();
+            throw new BusinessRuleException("Nome ou cor já de categoria já existem no sistema.");
         }
 
         category.updateValues(data);
-        categoryRepository.save(category);
-
-        return ResponseEntity.ok(category);
+        return categoryRepository.save(category);
     }
 
     @Transactional
-    public ResponseEntity<Void> deleteById(String id) {
-        Optional<Category> optionalCategory = categoryRepository.findById(id);
+    public void deleteById(String id) {
+        Category category = categoryRepository.findById(id)
+                .orElseThrow(() -> new CategoryNotFoundException("Categoria não encontrada no sistema: " + id));
 
-        if (optionalCategory.isEmpty()) {
-            return ResponseEntity.notFound().build();
-        }
-
-        Category category = optionalCategory.get();
         categoryRepository.delete(category);
-
-        return ResponseEntity.noContent().build();
     }
 }

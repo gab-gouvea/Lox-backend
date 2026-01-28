@@ -8,7 +8,9 @@ import br.com.lox.domain.item.dto.CreateItemData;
 import br.com.lox.domain.item.dto.UpdateItemData;
 import br.com.lox.domain.item.entity.Item;
 import br.com.lox.domain.item.repository.ItemRepository;
-import org.springframework.http.ResponseEntity;
+import br.com.lox.exceptions.CategoryNotFoundException;
+import br.com.lox.exceptions.InventoryNotFoundException;
+import br.com.lox.exceptions.ItemNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -29,17 +31,12 @@ public class ItemService {
     }
 
     @Transactional
-    public ResponseEntity<Item> create(CreateItemData data) {
-        if (!inventoryRepository.existsById(data.inventoryId())) {
-            return ResponseEntity.notFound().build();
-        }
+    public Item create(CreateItemData data) {
+        Inventory inventory = inventoryRepository.findById(data.inventoryId())
+                .orElseThrow(() -> new InventoryNotFoundException("Inventário não encontrado no sistema " + data.inventoryId()));
 
-        if (!categoryRepository.existsById(data.categoryId())) {
-            return ResponseEntity.notFound().build();
-        }
-
-        Inventory inventory = inventoryRepository.getReferenceById(data.inventoryId());
-        Category category = categoryRepository.getReferenceById(data.categoryId());
+        Category category = categoryRepository.findById(data.categoryId())
+                .orElseThrow(() -> new CategoryNotFoundException("Categoria não encontrada no sistema " + data.categoryId()));
 
         var entity = new Item(
                 data.name(),
@@ -50,65 +47,45 @@ public class ItemService {
                 category
         );
 
-        itemRepository.save(entity);
-        return ResponseEntity.ok(entity);
+        return itemRepository.save(entity);
     }
 
     public List<Item> findAll() {
         return itemRepository.findAll();
     }
 
-    public ResponseEntity<Item> findById(String id) {
+    public Item findById(String id) {
         return itemRepository.findById(id)
-                .map(ResponseEntity::ok)
-                .orElseGet(() -> ResponseEntity.notFound().build());
+                .orElseThrow(() -> new ItemNotFoundException("Item não encontrado no sistema: " + id));
     }
 
     @Transactional
-    public ResponseEntity<Item> update(String id, UpdateItemData data) {
-        Optional<Item> optionalItem = itemRepository.findById(id);
+    public Item update(String id, UpdateItemData data) {
+        Item item = itemRepository.findById(id)
+                .orElseThrow(() -> new ItemNotFoundException("Item não encontrado no sistema: " + id));
 
-        if (optionalItem.isEmpty()) {
-            return ResponseEntity.notFound().build();
-        }
 
-        Item item = optionalItem.get();
         Inventory inventory = null;
         Category category = null;
-
         if (data.inventoryId() != null) {
-            Optional<Inventory> optionalInventory = inventoryRepository.findById(data.inventoryId());
-            if (optionalInventory.isEmpty()) {
-                return ResponseEntity.notFound().build();
-            }
-            inventory = optionalInventory.get();
+            inventory = inventoryRepository.findById(data.inventoryId())
+                    .orElseThrow(() -> new InventoryNotFoundException("Inventário não encontrado no sistema: " + data.inventoryId()));
         }
 
         if (data.categoryId() != null) {
-            Optional<Category> optionalCategory = categoryRepository.findById(data.categoryId());
-            if (optionalCategory.isEmpty()) {
-                return ResponseEntity.notFound().build();
-            }
-            category = optionalCategory.get();
+            category = categoryRepository.findById(data.categoryId())
+                    .orElseThrow(() -> new CategoryNotFoundException("Categoria não encontrada no sistema: " + data.categoryId()));
         }
 
         item.updateValues(category, inventory, data);
-        itemRepository.save(item);
-
-        return ResponseEntity.ok(item);
+        return itemRepository.save(item);
     }
 
     @Transactional
-    public ResponseEntity<Void> deleteById(String id) {
-        Optional<Item> optionalItem = itemRepository.findById(id);
+    public void deleteById(String id) {
+        Item item = itemRepository.findById(id)
+                .orElseThrow(() -> new ItemNotFoundException("Item não encontrado no sistema: " + id));
 
-        if (optionalItem.isEmpty()) {
-            return ResponseEntity.notFound().build();
-        }
-
-        Item item = optionalItem.get();
         itemRepository.delete(item);
-
-        return ResponseEntity.noContent().build();
     }
 }
