@@ -1,93 +1,92 @@
 package br.com.lox.domain.property.entity;
 
-
-import br.com.lox.domain.checkin.entity.CheckIn;
-import br.com.lox.domain.component.entity.Component;
-import br.com.lox.domain.owner.entity.Owner;
-import br.com.lox.domain.property.dto.UpdatePropertyData;
-import br.com.lox.domain.rental.entity.Rental;
-import br.com.lox.domain.user.entity.User;
+import br.com.lox.domain.property.dto.UpdatePropertyDTO;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.math.BigDecimal;
+import java.time.Instant;
 
 @Entity
+@Table(name = "propriedades")
 @NoArgsConstructor
-@AllArgsConstructor
-@Setter
 @Getter
 public class Property {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     private String id;
 
-    private String title;
-    private String address;
+    @Column(nullable = false)
+    private String nome;
 
-    // @OneToOne(cascade = CascadeType.ALL)
-    // private CheckIn checkin;
+    private String endereco;
 
-    @ElementCollection
-    @CollectionTable(
-            name = "property_photos",
-            joinColumns = @JoinColumn(name = "property_id")
-    )
-    @MapKeyColumn(name = "photo_index")
-    @Column(name = "photo_url")
-    private Map<Integer , String> photos = new HashMap<>();
+    private String proprietarioId;
 
-    @ManyToMany
-    @JoinTable(
-            name = "property_components",
-            joinColumns = @JoinColumn(name = "property_id"),
-            inverseJoinColumns = @JoinColumn(name = "component_id")
-    )
-    private List<Component> components = new ArrayList<>();
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private PropertyType tipo;
 
-    @ManyToOne
-    @JoinColumn(name = "owner_id")
-    private Owner owner;
+    @Column(nullable = false)
+    private Integer quartos;
 
-    @OneToMany(mappedBy = "property")
-    private List<Rental> rentals = new ArrayList<>();
+    private String fotoCapa;
 
-    private String notes;
+    @Column(nullable = false)
+    private BigDecimal percentualComissao;
 
-    private Boolean active = true;
+    private BigDecimal taxaLimpeza;
 
-    @ManyToOne
-    @JoinColumn(name = "user_id")
-    private User user;
+    @Column(nullable = false)
+    private Boolean temHobbyBox;
 
-    private String conciergeCode; //opcional
-    private String doorCode; //opcional
+    private String acessoPredio;
 
+    private String acessoApartamento;
 
-    public Property(String title, String address, Map<Integer, String> photos, List<Component> components, Owner owner, String notes, String c, String c1) {
-        this.title = title;
-        this.address = address;
-        this.photos = photos;
-        this.components = components;
-        this.owner = owner;
-        this.notes = notes;
-        this.conciergeCode = c;
-        this.doorCode = c1;
+    @Column(nullable = false)
+    private Boolean ativo;
+
+    @Column(nullable = false, updatable = false)
+    private Instant criadoEm;
+
+    @Column(nullable = false)
+    private Instant atualizadoEm;
+
+    public Property(String nome, String endereco, String proprietarioId, PropertyType tipo,
+                    Integer quartos, String fotoCapa, BigDecimal percentualComissao,
+                    BigDecimal taxaLimpeza, Boolean temHobbyBox, String acessoPredio,
+                    String acessoApartamento, Boolean ativo) {
+        this.nome = nome;
+        this.endereco = endereco;
+        this.proprietarioId = proprietarioId;
+        this.tipo = tipo;
+        this.quartos = quartos;
+        this.fotoCapa = fotoCapa;
+        this.percentualComissao = percentualComissao;
+        this.taxaLimpeza = taxaLimpeza;
+        this.temHobbyBox = temHobbyBox;
+        this.acessoPredio = acessoPredio;
+        this.acessoApartamento = acessoApartamento;
+        this.ativo = ativo;
+        this.criadoEm = Instant.now();
+        this.atualizadoEm = Instant.now();
     }
 
-    public void updateValues(UpdatePropertyData data, List<Component> components) {
-        if (data.title() != null) this.title = data.title();
-        if (data.address() != null) this.address = data.address();
-        if (data.photos() != null) this.photos = data.photos();
-        if (data.notes() != null) this.notes = data.notes();
-        if (data.conciergeCode() != null) this.conciergeCode = data.conciergeCode();
-        if (data.doorCode() != null) this.doorCode = data.doorCode();
-        if (components != null) this.components = components;
+    public void updateValues(UpdatePropertyDTO data) {
+        this.atualizadoEm = Instant.now();
+        if (data.nome() != null) this.nome = data.nome();
+        if (data.endereco() != null) this.endereco = data.endereco();
+        if (data.proprietarioId() != null) this.proprietarioId = data.proprietarioId();
+        if (data.tipo() != null) this.tipo = data.tipo();
+        if (data.quartos() != null) this.quartos = data.quartos();
+        if (data.fotoCapa() != null) this.fotoCapa = data.fotoCapa();
+        if (data.percentualComissao() != null) this.percentualComissao = data.percentualComissao();
+        if (data.taxaLimpeza() != null) this.taxaLimpeza = data.taxaLimpeza();
+        if (data.temHobbyBox() != null) this.temHobbyBox = data.temHobbyBox();
+        if (data.acessoPredio() != null) this.acessoPredio = data.acessoPredio();
+        if (data.acessoApartamento() != null) this.acessoApartamento = data.acessoApartamento();
+        if (data.ativo() != null) this.ativo = data.ativo();
     }
 }

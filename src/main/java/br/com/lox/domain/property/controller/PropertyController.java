@@ -1,7 +1,7 @@
 package br.com.lox.domain.property.controller;
 
-import br.com.lox.domain.property.dto.CreatePropertyData;
-import br.com.lox.domain.property.dto.UpdatePropertyData;
+import br.com.lox.domain.property.dto.CreatePropertyDTO;
+import br.com.lox.domain.property.dto.UpdatePropertyDTO;
 import br.com.lox.domain.property.entity.Property;
 import br.com.lox.domain.property.service.PropertyService;
 import jakarta.validation.Valid;
@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/properties")
+@RequestMapping("/api/properties")
 public class PropertyController {
 
     private final PropertyService propertyService;
@@ -22,7 +22,7 @@ public class PropertyController {
     }
 
     @PostMapping
-    public ResponseEntity<Property> create(@RequestBody @Valid CreatePropertyData data) {
+    public ResponseEntity<Property> create(@RequestBody @Valid CreatePropertyDTO data) {
         Property property = propertyService.create(data);
         return ResponseEntity.status(HttpStatus.CREATED).body(property);
     }
@@ -40,9 +40,9 @@ public class PropertyController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Property> update(@PathVariable String id, @RequestBody UpdatePropertyData data) {
-       Property property = propertyService.update(id, data);
-       return ResponseEntity.ok(property);
+    public ResponseEntity<Property> update(@PathVariable String id, @RequestBody @Valid UpdatePropertyDTO data) {
+        Property property = propertyService.update(id, data);
+        return ResponseEntity.ok(property);
     }
 
     @DeleteMapping("/{id}")
