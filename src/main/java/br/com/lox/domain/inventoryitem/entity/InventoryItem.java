@@ -4,11 +4,14 @@ import br.com.lox.domain.inventoryitem.dto.UpdateInventoryItemDTO;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.time.Instant;
 
 @Entity
 @Table(name = "itens_inventario")
+@EntityListeners(AuditingEntityListener.class)
 @NoArgsConstructor
 @Getter
 public class InventoryItem {
@@ -32,6 +35,7 @@ public class InventoryItem {
 
     private String imagemUrl;
 
+    @LastModifiedDate
     @Column(nullable = false)
     private Instant atualizadoEm;
 
@@ -43,11 +47,9 @@ public class InventoryItem {
         this.quantidade = quantidade;
         this.descricao = blankToNull(descricao);
         this.imagemUrl = blankToNull(imagemUrl);
-        this.atualizadoEm = Instant.now();
     }
 
     public void updateValues(UpdateInventoryItemDTO data) {
-        this.atualizadoEm = Instant.now();
         if (data.comodo() != null) this.comodo = data.comodo();
         if (data.nome() != null) this.nome = data.nome();
         if (data.quantidade() != null) this.quantidade = data.quantidade();

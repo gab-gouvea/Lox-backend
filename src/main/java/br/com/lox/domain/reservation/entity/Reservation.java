@@ -1,10 +1,12 @@
 package br.com.lox.domain.reservation.entity;
 
-import br.com.lox.domain.reservation.dto.DespesaDTO;
 import br.com.lox.domain.reservation.dto.UpdateReservationDTO;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.math.BigDecimal;
 import java.time.Instant;
@@ -13,6 +15,7 @@ import java.util.List;
 
 @Entity
 @Table(name = "reservas")
+@EntityListeners(AuditingEntityListener.class)
 @NoArgsConstructor
 @Getter
 public class Reservation {
@@ -66,9 +69,11 @@ public class Reservation {
 
     private BigDecimal valorRecebidoCancelamento;
 
+    @CreatedDate
     @Column(nullable = false, updatable = false)
     private Instant criadoEm;
 
+    @LastModifiedDate
     @Column(nullable = false)
     private Instant atualizadoEm;
 
@@ -92,12 +97,9 @@ public class Reservation {
         this.faxinaPaga = faxinaPaga;
         this.faxinaData = faxinaData;
         this.despesas = despesas != null ? despesas : new ArrayList<>();
-        this.criadoEm = Instant.now();
-        this.atualizadoEm = Instant.now();
     }
 
     public void updateValues(UpdateReservationDTO data) {
-        this.atualizadoEm = Instant.now();
         if (data.propriedadeId() != null) this.propriedadeId = data.propriedadeId();
         if (data.nomeHospede() != null) this.nomeHospede = data.nomeHospede();
         if (data.checkIn() != null) this.checkIn = data.checkIn();

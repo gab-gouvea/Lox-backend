@@ -4,12 +4,16 @@ import br.com.lox.domain.proprietario.dto.UpdateProprietarioDTO;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.time.Instant;
 import java.time.LocalDate;
 
 @Entity
 @Table(name = "proprietarios")
+@EntityListeners(AuditingEntityListener.class)
 @NoArgsConstructor
 @Getter
 public class Proprietario {
@@ -36,9 +40,11 @@ public class Proprietario {
 
     private String email;
 
+    @CreatedDate
     @Column(nullable = false, updatable = false)
     private Instant criadoEm;
 
+    @LastModifiedDate
     @Column(nullable = false)
     private Instant atualizadoEm;
 
@@ -52,12 +58,9 @@ public class Proprietario {
         this.estadoCivil = estadoCivil;
         this.endereco = endereco;
         this.email = email;
-        this.criadoEm = Instant.now();
-        this.atualizadoEm = Instant.now();
     }
 
     public void updateValues(UpdateProprietarioDTO data) {
-        this.atualizadoEm = Instant.now();
         if (data.nomeCompleto() != null) this.nomeCompleto = data.nomeCompleto();
         if (data.cpf() != null) this.cpf = data.cpf();
         if (data.rg() != null) this.rg = data.rg();

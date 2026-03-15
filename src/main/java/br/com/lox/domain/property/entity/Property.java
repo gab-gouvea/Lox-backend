@@ -4,12 +4,16 @@ import br.com.lox.domain.property.dto.UpdatePropertyDTO;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.math.BigDecimal;
 import java.time.Instant;
 
 @Entity
 @Table(name = "propriedades")
+@EntityListeners(AuditingEntityListener.class)
 @NoArgsConstructor
 @Getter
 public class Property {
@@ -48,9 +52,11 @@ public class Property {
     @Column(nullable = false)
     private Boolean ativo;
 
+    @CreatedDate
     @Column(nullable = false, updatable = false)
     private Instant criadoEm;
 
+    @LastModifiedDate
     @Column(nullable = false)
     private Instant atualizadoEm;
 
@@ -70,12 +76,9 @@ public class Property {
         this.acessoPredio = acessoPredio;
         this.acessoApartamento = acessoApartamento;
         this.ativo = ativo;
-        this.criadoEm = Instant.now();
-        this.atualizadoEm = Instant.now();
     }
 
     public void updateValues(UpdatePropertyDTO data) {
-        this.atualizadoEm = Instant.now();
         if (data.nome() != null) this.nome = data.nome();
         if (data.endereco() != null) this.endereco = data.endereco();
         if (data.proprietarioId() != null) this.proprietarioId = data.proprietarioId();
