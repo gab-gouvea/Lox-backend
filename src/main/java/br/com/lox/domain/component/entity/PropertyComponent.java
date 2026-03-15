@@ -4,11 +4,16 @@ import br.com.lox.domain.component.dto.UpdateComponentDTO;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
+import java.time.Instant;
 import java.time.LocalDate;
 
 @Entity
 @Table(name = "componentes")
+@EntityListeners(AuditingEntityListener.class)
 @NoArgsConstructor
 @Getter
 public class PropertyComponent {
@@ -35,6 +40,14 @@ public class PropertyComponent {
 
     @Column(columnDefinition = "TEXT")
     private String observacoes;
+
+    @CreatedDate
+    @Column(nullable = false, updatable = false)
+    private Instant criadoEm;
+
+    @LastModifiedDate
+    @Column(nullable = false)
+    private Instant atualizadoEm;
 
     public PropertyComponent(String propriedadeId, String nome, LocalDate ultimaManutencao,
                              LocalDate proximaManutencao, Integer intervaloDias,

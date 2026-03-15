@@ -5,6 +5,7 @@ import br.com.lox.domain.reservation.dto.UpdateReservationDTO;
 import br.com.lox.domain.reservation.entity.Despesa;
 import br.com.lox.domain.reservation.entity.Reservation;
 import br.com.lox.domain.reservation.repository.ReservationRepository;
+import br.com.lox.exceptions.BusinessRuleException;
 import br.com.lox.exceptions.ReservationNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -24,6 +25,10 @@ public class ReservationService {
 
     @Transactional
     public Reservation create(CreateReservationDTO data) {
+        if (data.checkOut().isBefore(data.checkIn()) || data.checkOut().equals(data.checkIn())) {
+            throw new BusinessRuleException("Check-out deve ser após o check-in");
+        }
+
         List<Despesa> despesas = new ArrayList<>();
         if (data.despesas() != null) {
             despesas = data.despesas().stream()

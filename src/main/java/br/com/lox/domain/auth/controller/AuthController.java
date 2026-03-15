@@ -50,7 +50,7 @@ public class AuthController {
 
         rateLimiter.resetAttempts(ip);
         String token = jwtService.generateToken(user);
-        return ResponseEntity.ok(new TokenDTO(token));
+        return ResponseEntity.ok(new TokenDTO(token, user.getNome()));
     }
 
     private String getClientIp(HttpServletRequest request) {

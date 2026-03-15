@@ -39,6 +39,8 @@ public class InventoryItem {
     @Column(nullable = false)
     private Instant atualizadoEm;
 
+
+
     public InventoryItem(String propriedadeId, String comodo, String nome, Integer quantidade,
                          String descricao, String imagemUrl) {
         this.propriedadeId = propriedadeId;
