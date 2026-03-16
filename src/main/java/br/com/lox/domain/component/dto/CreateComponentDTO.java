@@ -11,6 +11,6 @@ public record CreateComponentDTO(
         @NotNull LocalDate ultimaManutencao,
         LocalDate proximaManutencao,
         @NotNull @Min(1) Integer intervaloDias,
-        String prestador,
+        @NotBlank String prestador,
         String observacoes
 ) {}

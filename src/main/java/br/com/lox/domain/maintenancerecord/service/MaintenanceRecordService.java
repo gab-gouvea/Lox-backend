@@ -36,10 +36,19 @@ public class MaintenanceRecordService {
     }
 
     public List<MaintenanceRecord> findAll(String propertyId, LocalDate startDate, LocalDate endDate) {
-        if (propertyId == null && startDate == null && endDate == null) {
-            return maintenanceRecordRepository.findAll();
+        boolean hasProperty = propertyId != null;
+        boolean hasDates = startDate != null && endDate != null;
+
+        if (hasProperty && hasDates) {
+            return maintenanceRecordRepository.findByPropriedadeIdAndDataBetween(propertyId, startDate, endDate);
         }
-        return maintenanceRecordRepository.findWithFilters(propertyId, startDate, endDate);
+        if (hasDates) {
+            return maintenanceRecordRepository.findByDataBetween(startDate, endDate);
+        }
+        if (hasProperty) {
+            return maintenanceRecordRepository.findByPropriedadeId(propertyId);
+        }
+        return maintenanceRecordRepository.findAll();
     }
 
     public MaintenanceRecord findById(String id) {

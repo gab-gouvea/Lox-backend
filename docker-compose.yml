@@ -1,11 +1,14 @@
 services:
-  mysql:
-    image: mysql:latest
+  postgres:
+    image: postgres:17
     ports:
-      - "3306:3306"
+      - "5432:5432"
     environment:
-      - MYSQL_DATABASE=lox
-      - ALLOW_EMPTY_PASSWORD=yes # dev
-      - MYSQL_ROOT_PASSWORD=lox
-      - MYSQL_USER=lox
-      - MYSQL_PASSWORD=lox
+      - POSTGRES_DB=lox
+      - POSTGRES_USER=lox
+      - POSTGRES_PASSWORD=lox
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+
+volumes:
+  pgdata:
