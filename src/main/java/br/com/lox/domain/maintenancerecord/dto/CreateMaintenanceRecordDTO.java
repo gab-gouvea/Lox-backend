@@ -9,7 +9,7 @@ import java.time.LocalDate;
 
 public record CreateMaintenanceRecordDTO(
         @NotBlank String propriedadeId,
-        @NotBlank String componenteId,
+        String componenteId,
         @NotBlank String nomeServico,
         String prestador,
         @NotNull LocalDate data,

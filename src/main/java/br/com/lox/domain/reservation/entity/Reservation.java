@@ -99,6 +99,10 @@ public class Reservation {
         this.despesas = despesas != null ? despesas : new ArrayList<>();
     }
 
+    public void setStatus(ReservationStatus status) {
+        this.status = status;
+    }
+
     public void updateValues(UpdateReservationDTO data) {
         if (data.propriedadeId() != null) this.propriedadeId = data.propriedadeId();
         if (data.nomeHospede() != null) this.nomeHospede = data.nomeHospede();

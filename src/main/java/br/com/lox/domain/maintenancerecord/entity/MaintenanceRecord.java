@@ -20,7 +20,6 @@ public class MaintenanceRecord {
     @Column(nullable = false)
     private String propriedadeId;
 
-    @Column(nullable = false)
     private String componenteId;
 
     @Column(nullable = false)

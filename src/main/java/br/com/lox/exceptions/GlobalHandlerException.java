@@ -13,7 +13,7 @@ import java.util.stream.Collectors;
 @RestControllerAdvice
 public class GlobalHandlerException {
 
-    @ExceptionHandler({ProprietarioNotFoundException.class, PropertyNotFoundException.class, ReservationNotFoundException.class, ComponentNotFoundException.class, MaintenanceRecordNotFoundException.class, InventoryItemNotFoundException.class})
+    @ExceptionHandler({ProprietarioNotFoundException.class, PropertyNotFoundException.class, ReservationNotFoundException.class, ComponentNotFoundException.class, MaintenanceRecordNotFoundException.class, InventoryItemNotFoundException.class, ScheduledMaintenanceNotFoundException.class})
     public ResponseEntity<ErrorResponse> handleNotFoundExceptions(RuntimeException e) {
         ErrorResponse errorResponse = new ErrorResponse(
                 HttpStatus.NOT_FOUND,

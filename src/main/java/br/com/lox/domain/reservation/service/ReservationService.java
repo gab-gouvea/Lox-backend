@@ -4,13 +4,17 @@ import br.com.lox.domain.reservation.dto.CreateReservationDTO;
 import br.com.lox.domain.reservation.dto.UpdateReservationDTO;
 import br.com.lox.domain.reservation.entity.Despesa;
 import br.com.lox.domain.reservation.entity.Reservation;
+import br.com.lox.domain.reservation.entity.ReservationStatus;
 import br.com.lox.domain.reservation.repository.ReservationRepository;
 import br.com.lox.exceptions.BusinessRuleException;
 import br.com.lox.exceptions.ReservationNotFoundException;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Instant;
+import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -28,6 +32,8 @@ public class ReservationService {
         if (data.checkOut().isBefore(data.checkIn()) || data.checkOut().equals(data.checkIn())) {
             throw new BusinessRuleException("Check-out deve ser após o check-in");
         }
+
+        checkOverlap(data.propriedadeId(), data.checkIn(), data.checkOut(), null);
 
         List<Despesa> despesas = new ArrayList<>();
         if (data.despesas() != null) {
@@ -80,6 +86,19 @@ public class ReservationService {
         Reservation reservation = reservationRepository.findById(id)
                 .orElseThrow(() -> new ReservationNotFoundException("Reserva não encontrada no sistema: " + id));
 
+        // Verificar overlap apenas quando datas, propriedade ou status mudam
+        boolean datesChanged = data.checkIn() != null || data.checkOut() != null || data.propriedadeId() != null;
+        boolean statusChanged = data.status() != null;
+        if (datesChanged || statusChanged) {
+            var statusAfterUpdate = data.status() != null ? data.status() : reservation.getStatus();
+            if (statusAfterUpdate != ReservationStatus.cancelada) {
+                var checkIn = data.checkIn() != null ? data.checkIn() : reservation.getCheckIn();
+                var checkOut = data.checkOut() != null ? data.checkOut() : reservation.getCheckOut();
+                var propId = data.propriedadeId() != null ? data.propriedadeId() : reservation.getPropriedadeId();
+                checkOverlap(propId, checkIn, checkOut, id);
+            }
+        }
+
         reservation.updateValues(data);
 
         return reservationRepository.save(reservation);
@@ -91,5 +110,45 @@ public class ReservationService {
                 .orElseThrow(() -> new ReservationNotFoundException("Reserva não encontrada no sistema: " + id));
 
         reservationRepository.delete(reservation);
+    }
+
+    private void checkOverlap(String propertyId, Instant checkIn, Instant checkOut, String excludeId) {
+        var overlapping = reservationRepository.findByPropertyIdAndDateRange(propertyId, checkIn, checkOut);
+        var hasConflict = overlapping.stream()
+                .filter(r -> r.getStatus() != ReservationStatus.cancelada)
+                .filter(r -> excludeId == null || !r.getId().equals(excludeId))
+                .findAny()
+                .isPresent();
+        if (hasConflict) {
+            throw new BusinessRuleException("Já existe uma reserva neste período para esta propriedade");
+        }
+    }
+
+    @Scheduled(cron = "0 0 0 * * *") // Roda todo dia à meia-noite
+    @Transactional
+    public void updateReservationStatuses() {
+        var now = LocalDate.now(ZoneId.of("America/Sao_Paulo"))
+                .atStartOfDay(ZoneId.of("America/Sao_Paulo"))
+                .toInstant();
+
+        // confirmada -> em_andamento quando hoje >= checkIn
+        var toStart = reservationRepository.findByStatusAndCheckInLessThanEqual(
+                ReservationStatus.confirmada, now);
+        for (var r : toStart) {
+            r.setStatus(ReservationStatus.em_andamento);
+        }
+        if (!toStart.isEmpty()) {
+            reservationRepository.saveAll(toStart);
+        }
+
+        // em_andamento -> concluida quando hoje >= checkOut
+        var toComplete = reservationRepository.findByStatusAndCheckOutLessThanEqual(
+                ReservationStatus.em_andamento, now);
+        for (var r : toComplete) {
+            r.setStatus(ReservationStatus.concluida);
+        }
+        if (!toComplete.isEmpty()) {
+            reservationRepository.saveAll(toComplete);
+        }
     }
 }
