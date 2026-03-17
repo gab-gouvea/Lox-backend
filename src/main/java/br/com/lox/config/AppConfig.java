@@ -12,7 +12,7 @@ import java.util.List;
 @Configuration
 public class AppConfig {
 
-    @Value("${cors.allowed-origins:http://localhost:5173,http://localhost:5174}")
+    @Value("${cors.allowed-origins:https://fernandagouvea.com.br, https://loxweb-gabriel-gouvea-s-projects.vercel.app}")
     private String allowedOrigins;
 
     @Bean
