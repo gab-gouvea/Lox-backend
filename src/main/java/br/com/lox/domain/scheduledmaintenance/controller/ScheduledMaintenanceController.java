@@ -48,6 +48,12 @@ public class ScheduledMaintenanceController {
         return ResponseEntity.ok(entity);
     }
 
+    @GetMapping("/api/scheduled-maintenances/pending")
+    public ResponseEntity<List<ScheduledMaintenance>> findAllPending() {
+        List<ScheduledMaintenance> list = scheduledMaintenanceService.findAllPending();
+        return ResponseEntity.ok(list);
+    }
+
     @DeleteMapping("/api/scheduled-maintenances/{id}")
     public ResponseEntity<Void> deleteById(@PathVariable String id) {
         scheduledMaintenanceService.deleteById(id);

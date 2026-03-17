@@ -1,5 +1,6 @@
 package br.com.lox.domain.reservation.service;
 
+import br.com.lox.domain.property.repository.PropertyRepository;
 import br.com.lox.domain.reservation.dto.CreateReservationDTO;
 import br.com.lox.domain.reservation.dto.UpdateReservationDTO;
 import br.com.lox.domain.reservation.entity.Despesa;
@@ -22,9 +23,11 @@ import java.util.List;
 public class ReservationService {
 
     private final ReservationRepository reservationRepository;
+    private final PropertyRepository propertyRepository;
 
-    public ReservationService(ReservationRepository reservationRepository) {
+    public ReservationService(ReservationRepository reservationRepository, PropertyRepository propertyRepository) {
         this.reservationRepository = reservationRepository;
+        this.propertyRepository = propertyRepository;
     }
 
     @Transactional
@@ -59,6 +62,9 @@ public class ReservationService {
                 data.faxinaData(),
                 despesas
         );
+
+        propertyRepository.findById(data.propriedadeId())
+                .ifPresent(property -> entity.setPercentualComissao(property.getPercentualComissao()));
 
         return reservationRepository.save(entity);
     }

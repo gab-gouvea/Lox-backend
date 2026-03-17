@@ -69,6 +69,8 @@ public class Reservation {
 
     private BigDecimal valorRecebidoCancelamento;
 
+    private BigDecimal percentualComissao;
+
     @CreatedDate
     @Column(nullable = false, updatable = false)
     private Instant criadoEm;
@@ -101,6 +103,10 @@ public class Reservation {
 
     public void setStatus(ReservationStatus status) {
         this.status = status;
+    }
+
+    public void setPercentualComissao(BigDecimal percentualComissao) {
+        this.percentualComissao = percentualComissao;
     }
 
     public void updateValues(UpdateReservationDTO data) {

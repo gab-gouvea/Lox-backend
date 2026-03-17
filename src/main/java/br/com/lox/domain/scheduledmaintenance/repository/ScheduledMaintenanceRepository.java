@@ -13,4 +13,6 @@ public interface ScheduledMaintenanceRepository extends JpaRepository<ScheduledM
     List<ScheduledMaintenance> findByPropriedadeIdAndConfirmada(String propriedadeId, Boolean confirmada);
 
     List<ScheduledMaintenance> findByConfirmadaTrueAndDataConclusaoBefore(LocalDate date);
+
+    List<ScheduledMaintenance> findByConfirmadaFalse();
 }

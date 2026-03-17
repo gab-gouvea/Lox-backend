@@ -47,6 +47,10 @@ public class ScheduledMaintenanceService {
         return scheduledMaintenanceRepository.findByPropriedadeIdAndConfirmada(propriedadeId, false);
     }
 
+    public List<ScheduledMaintenance> findAllPending() {
+        return scheduledMaintenanceRepository.findByConfirmadaFalse();
+    }
+
     public ScheduledMaintenance findById(String id) {
         return scheduledMaintenanceRepository.findById(id)
                 .orElseThrow(() -> new ScheduledMaintenanceNotFoundException("Manutenção agendada não encontrada: " + id));
