@@ -1,6 +1,5 @@
 package br.com.lox.config;
 
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.cors.CorsConfiguration;
@@ -12,14 +11,16 @@ import java.util.List;
 @Configuration
 public class AppConfig {
 
-    @Value("${cors.allowed-origins:https://fernandagouvea.com.br, https://loxweb-gabriel-gouvea-s-projects.vercel.app}")
-    private String allowedOrigins;
-
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration config = new CorsConfiguration();
-        config.setAllowedOrigins(List.of(allowedOrigins.split(",")));
-        config.setAllowedMethods(List.of("*"));
+        config.setAllowedOriginPatterns(List.of(
+                "http://localhost:*",
+                "https://fernandagouvea.com.br",
+                "https://www.fernandagouvea.com.br",
+                "https://*.vercel.app"
+        ));
+        config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"));
         config.setAllowedHeaders(List.of("*"));
         config.setAllowCredentials(true);
 
