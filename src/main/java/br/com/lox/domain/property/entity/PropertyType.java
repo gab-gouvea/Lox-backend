@@ -6,6 +6,7 @@ import com.fasterxml.jackson.annotation.JsonValue;
 public enum PropertyType {
     apartamento("apartamento"),
     casa("casa"),
+    cobertura("cobertura"),
     studio("studio"),
     chale("chalé"),
     flat("flat"),
