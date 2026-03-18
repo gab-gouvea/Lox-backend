@@ -3,6 +3,7 @@ package br.com.lox.domain.property.dto;
 import br.com.lox.domain.property.entity.PropertyType;
 
 import java.math.BigDecimal;
+import java.time.Instant;
 
 public record UpdatePropertyDTO(
         String nome,
@@ -16,5 +17,7 @@ public record UpdatePropertyDTO(
         Boolean temHobbyBox,
         String acessoPredio,
         String acessoApartamento,
-        Boolean ativo
+        Boolean ativo,
+        Instant inativoAte,
+        String observacaoInatividade
 ) {}

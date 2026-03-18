@@ -52,6 +52,10 @@ public class Property {
     @Column(nullable = false)
     private Boolean ativo;
 
+    private Instant inativoAte;
+
+    private String observacaoInatividade;
+
     @CreatedDate
     @Column(nullable = false, updatable = false)
     private Instant criadoEm;
@@ -91,5 +95,12 @@ public class Property {
         if (data.acessoPredio() != null) this.acessoPredio = data.acessoPredio();
         if (data.acessoApartamento() != null) this.acessoApartamento = data.acessoApartamento();
         if (data.ativo() != null) this.ativo = data.ativo();
+        if (data.inativoAte() != null) this.inativoAte = data.inativoAte();
+        if (data.observacaoInatividade() != null) this.observacaoInatividade = data.observacaoInatividade();
+        // Allow clearing fields when reactivating
+        if (Boolean.TRUE.equals(data.ativo())) {
+            this.inativoAte = null;
+            this.observacaoInatividade = null;
+        }
     }
 }
