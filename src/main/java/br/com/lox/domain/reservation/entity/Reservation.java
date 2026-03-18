@@ -69,6 +69,8 @@ public class Reservation {
 
     private BigDecimal valorRecebidoCancelamento;
 
+    private BigDecimal valorLiquidoCancelamento;
+
     private BigDecimal percentualComissao;
 
     @CreatedDate
@@ -125,6 +127,7 @@ public class Reservation {
         if (data.faxinaPaga() != null) this.faxinaPaga = data.faxinaPaga();
         if (data.faxinaData() != null) this.faxinaData = data.faxinaData();
         if (data.valorRecebidoCancelamento() != null) this.valorRecebidoCancelamento = data.valorRecebidoCancelamento();
+        if (data.valorLiquidoCancelamento() != null) this.valorLiquidoCancelamento = data.valorLiquidoCancelamento();
 
         if (data.despesas() != null) {
             this.despesas.clear();

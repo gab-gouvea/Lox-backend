@@ -24,5 +24,6 @@ public record UpdateReservationDTO(
         Boolean faxinaPaga,
         Instant faxinaData,
         List<DespesaDTO> despesas,
-        BigDecimal valorRecebidoCancelamento
+        BigDecimal valorRecebidoCancelamento,
+        BigDecimal valorLiquidoCancelamento
 ) {}
