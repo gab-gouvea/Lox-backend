@@ -75,6 +75,10 @@ public class Reservation {
 
     private Boolean pagamentoRecebido;
 
+    private Boolean checkinConfirmado;
+
+    private Boolean checkoutConfirmado;
+
     @CreatedDate
     @Column(nullable = false, updatable = false)
     private Instant criadoEm;
@@ -131,6 +135,8 @@ public class Reservation {
         if (data.valorRecebidoCancelamento() != null) this.valorRecebidoCancelamento = data.valorRecebidoCancelamento();
         if (data.valorLiquidoCancelamento() != null) this.valorLiquidoCancelamento = data.valorLiquidoCancelamento();
         if (data.pagamentoRecebido() != null) this.pagamentoRecebido = data.pagamentoRecebido();
+        if (data.checkinConfirmado() != null) this.checkinConfirmado = data.checkinConfirmado();
+        if (data.checkoutConfirmado() != null) this.checkoutConfirmado = data.checkoutConfirmado();
 
         if (data.despesas() != null) {
             this.despesas.clear();

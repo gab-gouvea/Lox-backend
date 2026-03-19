@@ -26,5 +26,7 @@ public record UpdateReservationDTO(
         List<DespesaDTO> despesas,
         BigDecimal valorRecebidoCancelamento,
         BigDecimal valorLiquidoCancelamento,
-        Boolean pagamentoRecebido
+        Boolean pagamentoRecebido,
+        Boolean checkinConfirmado,
+        Boolean checkoutConfirmado
 ) {}
