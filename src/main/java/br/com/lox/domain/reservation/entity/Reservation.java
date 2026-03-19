@@ -73,6 +73,8 @@ public class Reservation {
 
     private BigDecimal percentualComissao;
 
+    private Boolean pagamentoRecebido;
+
     @CreatedDate
     @Column(nullable = false, updatable = false)
     private Instant criadoEm;
@@ -128,6 +130,7 @@ public class Reservation {
         if (data.faxinaData() != null) this.faxinaData = data.faxinaData();
         if (data.valorRecebidoCancelamento() != null) this.valorRecebidoCancelamento = data.valorRecebidoCancelamento();
         if (data.valorLiquidoCancelamento() != null) this.valorLiquidoCancelamento = data.valorLiquidoCancelamento();
+        if (data.pagamentoRecebido() != null) this.pagamentoRecebido = data.pagamentoRecebido();
 
         if (data.despesas() != null) {
             this.despesas.clear();
