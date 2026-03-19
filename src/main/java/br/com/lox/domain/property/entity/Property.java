@@ -49,6 +49,8 @@ public class Property {
 
     private String acessoApartamento;
 
+    private String senhaWifi;
+
     @Column(nullable = false)
     private Boolean ativo;
 
@@ -67,7 +69,7 @@ public class Property {
     public Property(String nome, String endereco, String proprietarioId, PropertyType tipo,
                     Integer quartos, String fotoCapa, BigDecimal percentualComissao,
                     BigDecimal taxaLimpeza, Boolean temHobbyBox, String acessoPredio,
-                    String acessoApartamento, Boolean ativo) {
+                    String acessoApartamento, String senhaWifi, Boolean ativo) {
         this.nome = nome;
         this.endereco = endereco;
         this.proprietarioId = proprietarioId;
@@ -79,6 +81,7 @@ public class Property {
         this.temHobbyBox = temHobbyBox;
         this.acessoPredio = acessoPredio;
         this.acessoApartamento = acessoApartamento;
+        this.senhaWifi = senhaWifi;
         this.ativo = ativo;
     }
 
@@ -94,6 +97,7 @@ public class Property {
         if (data.temHobbyBox() != null) this.temHobbyBox = data.temHobbyBox();
         if (data.acessoPredio() != null) this.acessoPredio = data.acessoPredio();
         if (data.acessoApartamento() != null) this.acessoApartamento = data.acessoApartamento();
+        if (data.senhaWifi() != null) this.senhaWifi = data.senhaWifi();
         if (data.ativo() != null) this.ativo = data.ativo();
         if (data.inativoAte() != null) this.inativoAte = data.inativoAte();
         if (data.observacaoInatividade() != null) this.observacaoInatividade = data.observacaoInatividade();

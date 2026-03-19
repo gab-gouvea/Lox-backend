@@ -33,6 +33,7 @@ public class PropertyService {
                 data.temHobbyBox(),
                 data.acessoPredio(),
                 data.acessoApartamento(),
+                data.senhaWifi(),
                 data.ativo()
         );
 

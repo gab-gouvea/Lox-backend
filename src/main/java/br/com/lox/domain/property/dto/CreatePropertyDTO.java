@@ -21,5 +21,6 @@ public record CreatePropertyDTO(
         @NotNull Boolean temHobbyBox,
         String acessoPredio,
         String acessoApartamento,
+        String senhaWifi,
         @NotNull Boolean ativo
 ) {}

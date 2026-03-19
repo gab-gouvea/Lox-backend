@@ -17,6 +17,7 @@ public record UpdatePropertyDTO(
         Boolean temHobbyBox,
         String acessoPredio,
         String acessoApartamento,
+        String senhaWifi,
         Boolean ativo,
         Instant inativoAte,
         String observacaoInatividade
