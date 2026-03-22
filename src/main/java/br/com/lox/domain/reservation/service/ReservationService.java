@@ -1,5 +1,7 @@
 package br.com.lox.domain.reservation.service;
 
+import br.com.lox.domain.locacao.entity.LocacaoStatus;
+import br.com.lox.domain.locacao.repository.LocacaoRepository;
 import br.com.lox.domain.property.repository.PropertyRepository;
 import br.com.lox.domain.reservation.dto.CreateReservationDTO;
 import br.com.lox.domain.reservation.dto.UpdateReservationDTO;
@@ -24,10 +26,12 @@ public class ReservationService {
 
     private final ReservationRepository reservationRepository;
     private final PropertyRepository propertyRepository;
+    private final LocacaoRepository locacaoRepository;
 
-    public ReservationService(ReservationRepository reservationRepository, PropertyRepository propertyRepository) {
+    public ReservationService(ReservationRepository reservationRepository, PropertyRepository propertyRepository, LocacaoRepository locacaoRepository) {
         this.reservationRepository = reservationRepository;
         this.propertyRepository = propertyRepository;
+        this.locacaoRepository = locacaoRepository;
     }
 
     @Transactional
@@ -119,6 +123,7 @@ public class ReservationService {
     }
 
     private void checkOverlap(String propertyId, Instant checkIn, Instant checkOut, String excludeId) {
+        // Checar conflito com outras reservas
         var overlapping = reservationRepository.findByPropertyIdAndDateRange(propertyId, checkIn, checkOut);
         var hasConflict = overlapping.stream()
                 .filter(r -> r.getStatus() != ReservationStatus.cancelada)
@@ -127,6 +132,16 @@ public class ReservationService {
                 .isPresent();
         if (hasConflict) {
             throw new BusinessRuleException("Já existe uma reserva neste período para esta propriedade");
+        }
+
+        // Checar conflito com locações
+        var overlappingLocacoes = locacaoRepository.findByPropertyIdAndDateRange(propertyId, checkIn, checkOut);
+        var hasLocacaoConflict = overlappingLocacoes.stream()
+                .filter(l -> l.getStatus() != LocacaoStatus.cancelada)
+                .findAny()
+                .isPresent();
+        if (hasLocacaoConflict) {
+            throw new BusinessRuleException("Já existe uma locação neste período para esta propriedade");
         }
     }
 
