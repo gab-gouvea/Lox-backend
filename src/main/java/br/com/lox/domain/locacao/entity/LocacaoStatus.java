@@ -5,8 +5,7 @@ import com.fasterxml.jackson.annotation.JsonValue;
 
 public enum LocacaoStatus {
     ativa("ativa"),
-    encerrada("encerrada"),
-    cancelada("cancelada");
+    encerrada("encerrada");
 
     private final String value;
 

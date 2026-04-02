@@ -9,10 +9,13 @@ import br.com.lox.domain.reservation.entity.ReservationStatus;
 import br.com.lox.domain.reservation.repository.ReservationRepository;
 import br.com.lox.exceptions.BusinessRuleException;
 import br.com.lox.exceptions.LocacaoNotFoundException;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Instant;
+import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.List;
 
 @Service
@@ -46,7 +49,10 @@ public class LocacaoService {
                 data.email(),
                 data.checkIn(),
                 data.checkOut(),
+                data.numMoradores(),
                 data.valorMensal(),
+                data.garantia(),
+                data.faxinaIntervaloDias(),
                 data.notas(),
                 data.status()
         );
@@ -78,15 +84,11 @@ public class LocacaoService {
                 .orElseThrow(() -> new LocacaoNotFoundException("Locação não encontrada: " + id));
 
         boolean datesChanged = data.checkIn() != null || data.checkOut() != null || data.propriedadeId() != null;
-        boolean statusChanged = data.status() != null;
-        if (datesChanged || statusChanged) {
-            var statusAfterUpdate = data.status() != null ? data.status() : locacao.getStatus();
-            if (statusAfterUpdate != LocacaoStatus.cancelada) {
-                var checkIn = data.checkIn() != null ? data.checkIn() : locacao.getCheckIn();
-                var checkOut = data.checkOut() != null ? data.checkOut() : locacao.getCheckOut();
-                var propId = data.propriedadeId() != null ? data.propriedadeId() : locacao.getPropriedadeId();
-                checkOverlap(propId, checkIn, checkOut, id);
-            }
+        if (datesChanged) {
+            var checkIn = data.checkIn() != null ? data.checkIn() : locacao.getCheckIn();
+            var checkOut = data.checkOut() != null ? data.checkOut() : locacao.getCheckOut();
+            var propId = data.propriedadeId() != null ? data.propriedadeId() : locacao.getPropriedadeId();
+            checkOverlap(propId, checkIn, checkOut, id);
         }
 
         locacao.updateValues(data);
@@ -105,7 +107,6 @@ public class LocacaoService {
         // Checar conflito com outras locações
         var overlappingLocacoes = locacaoRepository.findByPropertyIdAndDateRange(propertyId, checkIn, checkOut);
         var hasLocacaoConflict = overlappingLocacoes.stream()
-                .filter(l -> l.getStatus() != LocacaoStatus.cancelada)
                 .filter(l -> excludeId == null || !l.getId().equals(excludeId))
                 .findAny()
                 .isPresent();
@@ -121,6 +122,24 @@ public class LocacaoService {
                 .isPresent();
         if (hasReservationConflict) {
             throw new BusinessRuleException("Já existe uma reserva neste período para esta propriedade");
+        }
+    }
+
+    @Scheduled(cron = "0 0 0 * * *") // Roda todo dia à meia-noite
+    @Transactional
+    public void updateLocacaoStatuses() {
+        var now = LocalDate.now(ZoneId.of("America/Sao_Paulo"))
+                .atStartOfDay(ZoneId.of("America/Sao_Paulo"))
+                .toInstant();
+
+        // ativa -> encerrada quando hoje >= checkOut
+        var toEnd = locacaoRepository.findByStatusAndCheckOutLessThanEqual(
+                LocacaoStatus.ativa, now);
+        for (var l : toEnd) {
+            l.setStatus(LocacaoStatus.encerrada);
+        }
+        if (!toEnd.isEmpty()) {
+            locacaoRepository.saveAll(toEnd);
         }
     }
 }

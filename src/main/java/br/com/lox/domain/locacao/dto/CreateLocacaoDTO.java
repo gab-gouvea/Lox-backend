@@ -21,7 +21,10 @@ public record CreateLocacaoDTO(
         String email,
         @NotNull Instant checkIn,
         @NotNull Instant checkOut,
+        Integer numMoradores,
         @DecimalMin("0") BigDecimal valorMensal,
+        String garantia,
+        Integer faxinaIntervaloDias,
         String notas,
         @NotNull LocacaoStatus status
 ) {}

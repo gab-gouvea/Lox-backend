@@ -48,7 +48,23 @@ public class Locacao {
     @Column(nullable = false)
     private Instant checkOut;
 
+    private Integer numMoradores;
+
     private BigDecimal valorMensal;
+
+    private String garantia;
+
+    // Faxina de rotina
+    private Integer faxinaIntervaloDias;
+    private Instant ultimaFaxina;
+    private Instant proximaFaxina;
+
+    // Faxina de saída (mesmos campos das reservas)
+    private String faxinaStatus; // "nao_agendada", "agendada"
+    private Boolean faxinaPorMim;
+    private BigDecimal custoEmpresaFaxina;
+    private Boolean faxinaPaga;
+    private Instant faxinaData;
 
     @Column(columnDefinition = "TEXT")
     private String notas;
@@ -68,7 +84,8 @@ public class Locacao {
     public Locacao(String propriedadeId, String nomeCompleto, String cpf, String rg,
                    LocalDate dataNascimento, String profissao, String estadoCivil,
                    String endereco, String email, Instant checkIn, Instant checkOut,
-                   BigDecimal valorMensal, String notas, LocacaoStatus status) {
+                   Integer numMoradores, BigDecimal valorMensal, String garantia,
+                   Integer faxinaIntervaloDias, String notas, LocacaoStatus status) {
         this.propriedadeId = propriedadeId;
         this.nomeCompleto = nomeCompleto;
         this.cpf = cpf;
@@ -80,7 +97,10 @@ public class Locacao {
         this.email = email;
         this.checkIn = checkIn;
         this.checkOut = checkOut;
+        this.numMoradores = numMoradores;
         this.valorMensal = valorMensal;
+        this.garantia = garantia;
+        this.faxinaIntervaloDias = faxinaIntervaloDias;
         this.notas = notas;
         this.status = status;
     }
@@ -101,7 +121,17 @@ public class Locacao {
         if (data.email() != null) this.email = data.email();
         if (data.checkIn() != null) this.checkIn = data.checkIn();
         if (data.checkOut() != null) this.checkOut = data.checkOut();
+        if (data.numMoradores() != null) this.numMoradores = data.numMoradores();
         if (data.valorMensal() != null) this.valorMensal = data.valorMensal();
+        if (data.garantia() != null) this.garantia = data.garantia();
+        if (data.faxinaIntervaloDias() != null) this.faxinaIntervaloDias = data.faxinaIntervaloDias();
+        if (data.ultimaFaxina() != null) this.ultimaFaxina = data.ultimaFaxina();
+        if (data.proximaFaxina() != null) this.proximaFaxina = data.proximaFaxina();
+        if (data.faxinaStatus() != null) this.faxinaStatus = data.faxinaStatus();
+        if (data.faxinaPorMim() != null) this.faxinaPorMim = data.faxinaPorMim();
+        if (data.custoEmpresaFaxina() != null) this.custoEmpresaFaxina = data.custoEmpresaFaxina();
+        if (data.faxinaPaga() != null) this.faxinaPaga = data.faxinaPaga();
+        if (data.faxinaData() != null) this.faxinaData = data.faxinaData();
         if (data.notas() != null) this.notas = data.notas();
         if (data.status() != null) this.status = data.status();
     }

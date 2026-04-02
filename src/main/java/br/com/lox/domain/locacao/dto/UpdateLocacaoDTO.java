@@ -18,7 +18,17 @@ public record UpdateLocacaoDTO(
         String email,
         Instant checkIn,
         Instant checkOut,
+        Integer numMoradores,
         BigDecimal valorMensal,
+        String garantia,
+        Integer faxinaIntervaloDias,
+        Instant ultimaFaxina,
+        Instant proximaFaxina,
+        String faxinaStatus,
+        Boolean faxinaPorMim,
+        BigDecimal custoEmpresaFaxina,
+        Boolean faxinaPaga,
+        Instant faxinaData,
         String notas,
         LocacaoStatus status
 ) {}

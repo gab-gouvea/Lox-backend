@@ -1,6 +1,5 @@
 package br.com.lox.domain.reservation.service;
 
-import br.com.lox.domain.locacao.entity.LocacaoStatus;
 import br.com.lox.domain.locacao.repository.LocacaoRepository;
 import br.com.lox.domain.property.repository.PropertyRepository;
 import br.com.lox.domain.reservation.dto.CreateReservationDTO;
@@ -137,7 +136,6 @@ public class ReservationService {
         // Checar conflito com locações
         var overlappingLocacoes = locacaoRepository.findByPropertyIdAndDateRange(propertyId, checkIn, checkOut);
         var hasLocacaoConflict = overlappingLocacoes.stream()
-                .filter(l -> l.getStatus() != LocacaoStatus.cancelada)
                 .findAny()
                 .isPresent();
         if (hasLocacaoConflict) {
