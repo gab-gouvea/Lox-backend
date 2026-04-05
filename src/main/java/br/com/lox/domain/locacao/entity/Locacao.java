@@ -52,6 +52,12 @@ public class Locacao {
 
     private BigDecimal valorMensal;
 
+    private String tipoPagamento; // "avista" ou "mensal"
+
+    private BigDecimal valorTotal; // usado quando tipoPagamento = "avista"
+
+    private BigDecimal percentualComissao;
+
     private String garantia;
 
     // Faxina de rotina
@@ -123,6 +129,9 @@ public class Locacao {
         if (data.checkOut() != null) this.checkOut = data.checkOut();
         if (data.numMoradores() != null) this.numMoradores = data.numMoradores();
         if (data.valorMensal() != null) this.valorMensal = data.valorMensal();
+        if (data.tipoPagamento() != null) this.tipoPagamento = data.tipoPagamento();
+        if (data.valorTotal() != null) this.valorTotal = data.valorTotal();
+        if (data.percentualComissao() != null) this.percentualComissao = data.percentualComissao();
         if (data.garantia() != null) this.garantia = data.garantia();
         if (data.faxinaIntervaloDias() != null) this.faxinaIntervaloDias = data.faxinaIntervaloDias();
         if (data.ultimaFaxina() != null) this.ultimaFaxina = data.ultimaFaxina();
