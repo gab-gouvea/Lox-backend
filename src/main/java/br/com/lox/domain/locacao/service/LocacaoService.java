@@ -39,6 +39,7 @@ public class LocacaoService {
 
         var entity = new Locacao(
                 data.propriedadeId(),
+                data.tipoLocacao() != null ? data.tipoLocacao() : "temporada",
                 data.nomeCompleto(),
                 data.cpf(),
                 data.rg(),
@@ -51,6 +52,9 @@ public class LocacaoService {
                 data.checkOut(),
                 data.numMoradores(),
                 data.valorMensal(),
+                data.tipoPagamento(),
+                data.valorTotal(),
+                data.percentualComissao(),
                 data.garantia(),
                 data.faxinaIntervaloDias(),
                 data.notas(),

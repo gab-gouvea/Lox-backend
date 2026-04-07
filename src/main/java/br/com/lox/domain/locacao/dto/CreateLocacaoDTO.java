@@ -11,6 +11,7 @@ import java.time.LocalDate;
 
 public record CreateLocacaoDTO(
         @NotBlank String propriedadeId,
+        String tipoLocacao,
         @NotBlank String nomeCompleto,
         String cpf,
         String rg,

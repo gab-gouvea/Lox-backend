@@ -60,7 +60,9 @@ public class Locacao {
 
     private String garantia;
 
-    // Faxina de rotina
+    private String tipoLocacao; // "temporada" ou "anual"
+
+    // Faxina de rotina (só temporada)
     private Integer faxinaIntervaloDias;
     private Instant ultimaFaxina;
     private Instant proximaFaxina;
@@ -71,6 +73,16 @@ public class Locacao {
     private BigDecimal custoEmpresaFaxina;
     private Boolean faxinaPaga;
     private Instant faxinaData;
+
+    // Vistoria (só anual)
+    private LocalDate vistoriaEntradaData;
+    @Column(columnDefinition = "TEXT")
+    private String vistoriaEntradaNotas;
+    private Boolean vistoriaEntradaConcluida;
+    private LocalDate vistoriaSaidaData;
+    @Column(columnDefinition = "TEXT")
+    private String vistoriaSaidaNotas;
+    private Boolean vistoriaSaidaConcluida;
 
     @Column(columnDefinition = "TEXT")
     private String notas;
@@ -87,12 +99,14 @@ public class Locacao {
     @Column(nullable = false)
     private Instant atualizadoEm;
 
-    public Locacao(String propriedadeId, String nomeCompleto, String cpf, String rg,
+    public Locacao(String propriedadeId, String tipoLocacao, String nomeCompleto, String cpf, String rg,
                    LocalDate dataNascimento, String profissao, String estadoCivil,
                    String endereco, String email, Instant checkIn, Instant checkOut,
-                   Integer numMoradores, BigDecimal valorMensal, String garantia,
+                   Integer numMoradores, BigDecimal valorMensal, String tipoPagamento,
+                   BigDecimal valorTotal, BigDecimal percentualComissao, String garantia,
                    Integer faxinaIntervaloDias, String notas, LocacaoStatus status) {
         this.propriedadeId = propriedadeId;
+        this.tipoLocacao = tipoLocacao;
         this.nomeCompleto = nomeCompleto;
         this.cpf = cpf;
         this.rg = rg;
@@ -105,6 +119,9 @@ public class Locacao {
         this.checkOut = checkOut;
         this.numMoradores = numMoradores;
         this.valorMensal = valorMensal;
+        this.tipoPagamento = tipoPagamento;
+        this.valorTotal = valorTotal;
+        this.percentualComissao = percentualComissao;
         this.garantia = garantia;
         this.faxinaIntervaloDias = faxinaIntervaloDias;
         this.notas = notas;
@@ -117,6 +134,7 @@ public class Locacao {
 
     public void updateValues(UpdateLocacaoDTO data) {
         if (data.propriedadeId() != null) this.propriedadeId = data.propriedadeId();
+        if (data.tipoLocacao() != null) this.tipoLocacao = data.tipoLocacao();
         if (data.nomeCompleto() != null) this.nomeCompleto = data.nomeCompleto();
         if (data.cpf() != null) this.cpf = data.cpf();
         if (data.rg() != null) this.rg = data.rg();
@@ -141,6 +159,24 @@ public class Locacao {
         if (data.custoEmpresaFaxina() != null) this.custoEmpresaFaxina = data.custoEmpresaFaxina();
         if (data.faxinaPaga() != null) this.faxinaPaga = data.faxinaPaga();
         if (data.faxinaData() != null) this.faxinaData = data.faxinaData();
+        if (Boolean.TRUE.equals(data.clearVistoriaEntrada())) {
+            this.vistoriaEntradaData = null;
+            this.vistoriaEntradaNotas = null;
+            this.vistoriaEntradaConcluida = null;
+        } else {
+            if (data.vistoriaEntradaData() != null) this.vistoriaEntradaData = data.vistoriaEntradaData();
+            if (data.vistoriaEntradaNotas() != null) this.vistoriaEntradaNotas = data.vistoriaEntradaNotas();
+            if (data.vistoriaEntradaConcluida() != null) this.vistoriaEntradaConcluida = data.vistoriaEntradaConcluida();
+        }
+        if (Boolean.TRUE.equals(data.clearVistoriaSaida())) {
+            this.vistoriaSaidaData = null;
+            this.vistoriaSaidaNotas = null;
+            this.vistoriaSaidaConcluida = null;
+        } else {
+            if (data.vistoriaSaidaData() != null) this.vistoriaSaidaData = data.vistoriaSaidaData();
+            if (data.vistoriaSaidaNotas() != null) this.vistoriaSaidaNotas = data.vistoriaSaidaNotas();
+            if (data.vistoriaSaidaConcluida() != null) this.vistoriaSaidaConcluida = data.vistoriaSaidaConcluida();
+        }
         if (data.notas() != null) this.notas = data.notas();
         if (data.status() != null) this.status = data.status();
     }

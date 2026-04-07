@@ -6,8 +6,10 @@ import java.math.BigDecimal;
 import java.time.Instant;
 import java.time.LocalDate;
 
+
 public record UpdateLocacaoDTO(
         String propriedadeId,
+        String tipoLocacao,
         String nomeCompleto,
         String cpf,
         String rg,
@@ -32,6 +34,14 @@ public record UpdateLocacaoDTO(
         BigDecimal custoEmpresaFaxina,
         Boolean faxinaPaga,
         Instant faxinaData,
+        LocalDate vistoriaEntradaData,
+        String vistoriaEntradaNotas,
+        Boolean vistoriaEntradaConcluida,
+        Boolean clearVistoriaEntrada,
+        LocalDate vistoriaSaidaData,
+        String vistoriaSaidaNotas,
+        Boolean vistoriaSaidaConcluida,
+        Boolean clearVistoriaSaida,
         String notas,
         LocacaoStatus status
 ) {}
