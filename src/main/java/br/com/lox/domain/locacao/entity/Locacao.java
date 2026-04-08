@@ -1,6 +1,7 @@
 package br.com.lox.domain.locacao.entity;
 
 import br.com.lox.domain.locacao.dto.UpdateLocacaoDTO;
+import br.com.lox.domain.reservation.entity.Despesa;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -11,6 +12,8 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import java.math.BigDecimal;
 import java.time.Instant;
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(name = "locacoes")
@@ -83,6 +86,10 @@ public class Locacao {
     @Column(columnDefinition = "TEXT")
     private String vistoriaSaidaNotas;
     private Boolean vistoriaSaidaConcluida;
+
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
+    @JoinColumn(name = "locacao_id")
+    private List<Despesa> despesas = new ArrayList<>();
 
     @Column(columnDefinition = "TEXT")
     private String notas;
@@ -179,5 +186,13 @@ public class Locacao {
         }
         if (data.notas() != null) this.notas = data.notas();
         if (data.status() != null) this.status = data.status();
+
+        if (data.despesas() != null) {
+            this.despesas.clear();
+            List<Despesa> novasDespesas = data.despesas().stream()
+                    .map(d -> new Despesa(d.descricao(), d.valor(), d.reembolsavel()))
+                    .toList();
+            this.despesas.addAll(novasDespesas);
+        }
     }
 }

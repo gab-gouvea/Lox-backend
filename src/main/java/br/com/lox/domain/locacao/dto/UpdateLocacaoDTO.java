@@ -1,10 +1,12 @@
 package br.com.lox.domain.locacao.dto;
 
 import br.com.lox.domain.locacao.entity.LocacaoStatus;
+import br.com.lox.domain.reservation.dto.DespesaDTO;
 
 import java.math.BigDecimal;
 import java.time.Instant;
 import java.time.LocalDate;
+import java.util.List;
 
 
 public record UpdateLocacaoDTO(
@@ -42,6 +44,7 @@ public record UpdateLocacaoDTO(
         String vistoriaSaidaNotas,
         Boolean vistoriaSaidaConcluida,
         Boolean clearVistoriaSaida,
+        List<DespesaDTO> despesas,
         String notas,
         LocacaoStatus status
 ) {}
