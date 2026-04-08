@@ -4,7 +4,9 @@ import br.com.lox.domain.locacao.dto.CreateLocacaoDTO;
 import br.com.lox.domain.locacao.dto.UpdateLocacaoDTO;
 import br.com.lox.domain.locacao.entity.Locacao;
 import br.com.lox.domain.locacao.entity.LocacaoStatus;
+import br.com.lox.domain.locacao.entity.RecebimentoLocacao;
 import br.com.lox.domain.locacao.repository.LocacaoRepository;
+import br.com.lox.domain.locacao.repository.RecebimentoLocacaoRepository;
 import br.com.lox.domain.reservation.entity.ReservationStatus;
 import br.com.lox.domain.reservation.repository.ReservationRepository;
 import br.com.lox.exceptions.BusinessRuleException;
@@ -13,6 +15,7 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.math.BigDecimal;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.ZoneId;
@@ -23,10 +26,13 @@ public class LocacaoService {
 
     private final LocacaoRepository locacaoRepository;
     private final ReservationRepository reservationRepository;
+    private final RecebimentoLocacaoRepository recebimentoRepository;
 
-    public LocacaoService(LocacaoRepository locacaoRepository, ReservationRepository reservationRepository) {
+    public LocacaoService(LocacaoRepository locacaoRepository, ReservationRepository reservationRepository,
+                          RecebimentoLocacaoRepository recebimentoRepository) {
         this.locacaoRepository = locacaoRepository;
         this.reservationRepository = reservationRepository;
+        this.recebimentoRepository = recebimentoRepository;
     }
 
     @Transactional
@@ -105,6 +111,34 @@ public class LocacaoService {
         Locacao locacao = locacaoRepository.findById(id)
                 .orElseThrow(() -> new LocacaoNotFoundException("Locação não encontrada: " + id));
         locacaoRepository.delete(locacao);
+    }
+
+    // ---- Recebimentos ----
+
+    public List<RecebimentoLocacao> findRecebimentosByLocacaoId(String locacaoId) {
+        return recebimentoRepository.findByLocacaoId(locacaoId);
+    }
+
+    public List<RecebimentoLocacao> findRecebimentosByMesAndAno(Integer mes, Integer ano) {
+        return recebimentoRepository.findByMesAndAno(mes, ano);
+    }
+
+    @Transactional
+    public RecebimentoLocacao upsertRecebimento(String locacaoId, Integer mes, Integer ano, BigDecimal valorRecebido) {
+        var existing = recebimentoRepository.findByLocacaoIdAndMesAndAno(locacaoId, mes, ano);
+        if (existing.isPresent()) {
+            var rec = existing.get();
+            rec.setValorRecebido(valorRecebido);
+            return recebimentoRepository.save(rec);
+        }
+        var rec = new RecebimentoLocacao(locacaoId, mes, ano, valorRecebido);
+        return recebimentoRepository.save(rec);
+    }
+
+    @Transactional
+    public void deleteRecebimento(String locacaoId, Integer mes, Integer ano) {
+        var existing = recebimentoRepository.findByLocacaoIdAndMesAndAno(locacaoId, mes, ano);
+        existing.ifPresent(recebimentoRepository::delete);
     }
 
     private void checkOverlap(String propertyId, Instant checkIn, Instant checkOut, String excludeId) {
