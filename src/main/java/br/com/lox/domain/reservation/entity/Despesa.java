@@ -24,9 +24,21 @@ public class Despesa {
     @Column(nullable = false)
     private Boolean reembolsavel;
 
+    private Integer mes;
+
+    private Integer ano;
+
     public Despesa(String descricao, BigDecimal valor, Boolean reembolsavel) {
         this.descricao = descricao;
         this.valor = valor;
         this.reembolsavel = reembolsavel;
+    }
+
+    public Despesa(String descricao, BigDecimal valor, Boolean reembolsavel, Integer mes, Integer ano) {
+        this.descricao = descricao;
+        this.valor = valor;
+        this.reembolsavel = reembolsavel;
+        this.mes = mes;
+        this.ano = ano;
     }
 }

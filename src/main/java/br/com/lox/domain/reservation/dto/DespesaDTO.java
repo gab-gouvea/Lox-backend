@@ -9,5 +9,7 @@ import java.math.BigDecimal;
 public record DespesaDTO(
         @NotBlank String descricao,
         @NotNull @DecimalMin("0") BigDecimal valor,
-        @NotNull Boolean reembolsavel
+        @NotNull Boolean reembolsavel,
+        Integer mes,
+        Integer ano
 ) {}

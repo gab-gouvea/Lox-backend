@@ -141,7 +141,7 @@ public class Reservation {
         if (data.despesas() != null) {
             this.despesas.clear();
             List<Despesa> novasDespesas = data.despesas().stream()
-                    .map(d -> new Despesa(d.descricao(), d.valor(), d.reembolsavel()))
+                    .map(d -> new Despesa(d.descricao(), d.valor(), d.reembolsavel(), d.mes(), d.ano()))
                     .toList();
             this.despesas.addAll(novasDespesas);
         }

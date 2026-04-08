@@ -44,7 +44,7 @@ public class ReservationService {
         List<Despesa> despesas = new ArrayList<>();
         if (data.despesas() != null) {
             despesas = data.despesas().stream()
-                    .map(d -> new Despesa(d.descricao(), d.valor(), d.reembolsavel()))
+                    .map(d -> new Despesa(d.descricao(), d.valor(), d.reembolsavel(), d.mes(), d.ano()))
                     .toList();
         }
 
