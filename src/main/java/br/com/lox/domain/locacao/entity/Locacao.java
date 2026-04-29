@@ -87,6 +87,9 @@ public class Locacao {
     private String vistoriaSaidaNotas;
     private Boolean vistoriaSaidaConcluida;
 
+    // Reajuste anual (só anual) — data do último reajuste de valor
+    private LocalDate ultimoReajuste;
+
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "locacao_id")
     private List<Despesa> despesas = new ArrayList<>();
@@ -183,6 +186,11 @@ public class Locacao {
             if (data.vistoriaSaidaData() != null) this.vistoriaSaidaData = data.vistoriaSaidaData();
             if (data.vistoriaSaidaNotas() != null) this.vistoriaSaidaNotas = data.vistoriaSaidaNotas();
             if (data.vistoriaSaidaConcluida() != null) this.vistoriaSaidaConcluida = data.vistoriaSaidaConcluida();
+        }
+        if (Boolean.TRUE.equals(data.clearUltimoReajuste())) {
+            this.ultimoReajuste = null;
+        } else if (data.ultimoReajuste() != null) {
+            this.ultimoReajuste = data.ultimoReajuste();
         }
         if (data.notas() != null) this.notas = data.notas();
         if (data.status() != null) this.status = data.status();

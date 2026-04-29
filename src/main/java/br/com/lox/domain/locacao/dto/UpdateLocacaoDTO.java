@@ -46,5 +46,7 @@ public record UpdateLocacaoDTO(
         Boolean clearVistoriaSaida,
         List<DespesaDTO> despesas,
         String notas,
-        LocacaoStatus status
+        LocacaoStatus status,
+        LocalDate ultimoReajuste,
+        Boolean clearUltimoReajuste
 ) {}
