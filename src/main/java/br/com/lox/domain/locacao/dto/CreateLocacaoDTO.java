@@ -27,6 +27,7 @@ public record CreateLocacaoDTO(
         String tipoPagamento,
         @DecimalMin("0") BigDecimal valorTotal,
         @DecimalMin("0") BigDecimal percentualComissao,
+        @DecimalMin("0") BigDecimal taxaLimpeza,
         String garantia,
         Integer faxinaIntervaloDias,
         String notas,

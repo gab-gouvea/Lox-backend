@@ -1,6 +1,7 @@
 package br.com.lox.domain.property.controller;
 
 import br.com.lox.domain.property.dto.CreatePropertyDTO;
+import br.com.lox.domain.property.dto.LockTaxaResultDTO;
 import br.com.lox.domain.property.dto.UpdatePropertyDTO;
 import br.com.lox.domain.property.entity.Property;
 import br.com.lox.domain.property.service.PropertyService;
@@ -49,5 +50,11 @@ public class PropertyController {
     public ResponseEntity<Void> deleteById(@PathVariable String id) {
         propertyService.deleteById(id);
         return ResponseEntity.noContent().build();
+    }
+
+    @PostMapping("/{id}/lock-taxa-past")
+    public ResponseEntity<LockTaxaResultDTO> lockTaxaLimpezaPast(@PathVariable String id) {
+        LockTaxaResultDTO result = propertyService.lockTaxaLimpezaPast(id);
+        return ResponseEntity.ok(result);
     }
 }

@@ -73,6 +73,8 @@ public class Reservation {
 
     private BigDecimal percentualComissao;
 
+    private BigDecimal taxaLimpeza;
+
     private Boolean pagamentoRecebido;
 
     private Boolean checkinConfirmado;
@@ -117,6 +119,10 @@ public class Reservation {
         this.percentualComissao = percentualComissao;
     }
 
+    public void setTaxaLimpeza(BigDecimal taxaLimpeza) {
+        this.taxaLimpeza = taxaLimpeza;
+    }
+
     public void updateValues(UpdateReservationDTO data) {
         if (data.propriedadeId() != null) this.propriedadeId = data.propriedadeId();
         if (data.nomeHospede() != null) this.nomeHospede = data.nomeHospede();
@@ -132,6 +138,7 @@ public class Reservation {
         if (data.custoEmpresaFaxina() != null) this.custoEmpresaFaxina = data.custoEmpresaFaxina();
         if (data.faxinaPaga() != null) this.faxinaPaga = data.faxinaPaga();
         if (data.faxinaData() != null) this.faxinaData = data.faxinaData();
+        if (data.taxaLimpeza() != null) this.taxaLimpeza = data.taxaLimpeza();
         if (data.valorRecebidoCancelamento() != null) this.valorRecebidoCancelamento = data.valorRecebidoCancelamento();
         if (data.valorLiquidoCancelamento() != null) this.valorLiquidoCancelamento = data.valorLiquidoCancelamento();
         if (data.pagamentoRecebido() != null) this.pagamentoRecebido = data.pagamentoRecebido();

@@ -67,7 +67,14 @@ public class ReservationService {
         );
 
         propertyRepository.findById(data.propriedadeId())
-                .ifPresent(property -> entity.setPercentualComissao(property.getPercentualComissao()));
+                .ifPresent(property -> {
+                    entity.setPercentualComissao(property.getPercentualComissao());
+                    if (data.taxaLimpeza() != null) {
+                        entity.setTaxaLimpeza(data.taxaLimpeza());
+                    } else {
+                        entity.setTaxaLimpeza(property.getTaxaLimpeza());
+                    }
+                });
 
         return reservationRepository.save(entity);
     }

@@ -27,6 +27,7 @@ public record UpdateLocacaoDTO(
         String tipoPagamento,
         BigDecimal valorTotal,
         BigDecimal percentualComissao,
+        BigDecimal taxaLimpeza,
         String garantia,
         Integer faxinaIntervaloDias,
         Instant ultimaFaxina,

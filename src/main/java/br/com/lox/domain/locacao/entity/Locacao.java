@@ -61,6 +61,8 @@ public class Locacao {
 
     private BigDecimal percentualComissao;
 
+    private BigDecimal taxaLimpeza;
+
     private String garantia;
 
     private String tipoLocacao; // "temporada" ou "anual"
@@ -142,6 +144,10 @@ public class Locacao {
         this.status = status;
     }
 
+    public void setTaxaLimpeza(BigDecimal taxaLimpeza) {
+        this.taxaLimpeza = taxaLimpeza;
+    }
+
     public void updateValues(UpdateLocacaoDTO data) {
         if (data.propriedadeId() != null) this.propriedadeId = data.propriedadeId();
         if (data.tipoLocacao() != null) this.tipoLocacao = data.tipoLocacao();
@@ -169,6 +175,7 @@ public class Locacao {
         if (data.custoEmpresaFaxina() != null) this.custoEmpresaFaxina = data.custoEmpresaFaxina();
         if (data.faxinaPaga() != null) this.faxinaPaga = data.faxinaPaga();
         if (data.faxinaData() != null) this.faxinaData = data.faxinaData();
+        if (data.taxaLimpeza() != null) this.taxaLimpeza = data.taxaLimpeza();
         if (Boolean.TRUE.equals(data.clearVistoriaEntrada())) {
             this.vistoriaEntradaData = null;
             this.vistoriaEntradaNotas = null;

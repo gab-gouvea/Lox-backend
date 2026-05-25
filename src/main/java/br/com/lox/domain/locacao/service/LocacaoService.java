@@ -7,6 +7,7 @@ import br.com.lox.domain.locacao.entity.LocacaoStatus;
 import br.com.lox.domain.locacao.entity.RecebimentoLocacao;
 import br.com.lox.domain.locacao.repository.LocacaoRepository;
 import br.com.lox.domain.locacao.repository.RecebimentoLocacaoRepository;
+import br.com.lox.domain.property.repository.PropertyRepository;
 import br.com.lox.domain.reservation.entity.ReservationStatus;
 import br.com.lox.domain.reservation.repository.ReservationRepository;
 import br.com.lox.exceptions.BusinessRuleException;
@@ -27,12 +28,14 @@ public class LocacaoService {
     private final LocacaoRepository locacaoRepository;
     private final ReservationRepository reservationRepository;
     private final RecebimentoLocacaoRepository recebimentoRepository;
+    private final PropertyRepository propertyRepository;
 
     public LocacaoService(LocacaoRepository locacaoRepository, ReservationRepository reservationRepository,
-                          RecebimentoLocacaoRepository recebimentoRepository) {
+                          RecebimentoLocacaoRepository recebimentoRepository, PropertyRepository propertyRepository) {
         this.locacaoRepository = locacaoRepository;
         this.reservationRepository = reservationRepository;
         this.recebimentoRepository = recebimentoRepository;
+        this.propertyRepository = propertyRepository;
     }
 
     @Transactional
@@ -66,6 +69,13 @@ public class LocacaoService {
                 data.notas(),
                 data.status()
         );
+
+        if (data.taxaLimpeza() != null) {
+            entity.setTaxaLimpeza(data.taxaLimpeza());
+        } else {
+            propertyRepository.findById(data.propriedadeId())
+                    .ifPresent(property -> entity.setTaxaLimpeza(property.getTaxaLimpeza()));
+        }
 
         return locacaoRepository.save(entity);
     }
