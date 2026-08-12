@@ -67,6 +67,10 @@ public class Reservation {
     @JoinColumn(name = "reservation_id")
     private List<Despesa> despesas = new ArrayList<>();
 
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
+    @JoinColumn(name = "reservation_id")
+    private List<Extensao> extensoes = new ArrayList<>();
+
     private BigDecimal valorRecebidoCancelamento;
 
     private BigDecimal valorLiquidoCancelamento;
@@ -93,7 +97,7 @@ public class Reservation {
                        ReservationStatus status, BigDecimal precoTotal, String notas,
                        ReservationSource fonte, Integer numHospedes, FaxinaStatus faxinaStatus,
                        Boolean faxinaPorMim, BigDecimal custoEmpresaFaxina, Boolean faxinaPaga,
-                       Instant faxinaData, List<Despesa> despesas) {
+                       Instant faxinaData, List<Despesa> despesas, List<Extensao> extensoes) {
         this.propriedadeId = propriedadeId;
         this.nomeHospede = nomeHospede;
         this.checkIn = checkIn;
@@ -109,6 +113,7 @@ public class Reservation {
         this.faxinaPaga = faxinaPaga;
         this.faxinaData = faxinaData;
         this.despesas = despesas != null ? despesas : new ArrayList<>();
+        this.extensoes = extensoes != null ? extensoes : new ArrayList<>();
     }
 
     public void setStatus(ReservationStatus status) {
@@ -151,6 +156,14 @@ public class Reservation {
                     .map(d -> new Despesa(d.descricao(), d.valor(), d.reembolsavel(), d.mes(), d.ano()))
                     .toList();
             this.despesas.addAll(novasDespesas);
+        }
+
+        if (data.extensoes() != null) {
+            this.extensoes.clear();
+            List<Extensao> novasExtensoes = data.extensoes().stream()
+                    .map(e -> new Extensao(e.dataInicio(), e.valor()))
+                    .toList();
+            this.extensoes.addAll(novasExtensoes);
         }
     }
 }

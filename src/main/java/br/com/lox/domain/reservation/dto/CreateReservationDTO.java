@@ -28,5 +28,6 @@ public record CreateReservationDTO(
         Boolean faxinaPaga,
         Instant faxinaData,
         @DecimalMin("0") BigDecimal taxaLimpeza,
-        List<DespesaDTO> despesas
+        List<DespesaDTO> despesas,
+        List<ExtensaoDTO> extensoes
 ) {}

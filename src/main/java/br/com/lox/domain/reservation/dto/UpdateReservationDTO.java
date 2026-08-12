@@ -25,6 +25,7 @@ public record UpdateReservationDTO(
         Instant faxinaData,
         BigDecimal taxaLimpeza,
         List<DespesaDTO> despesas,
+        List<ExtensaoDTO> extensoes,
         BigDecimal valorRecebidoCancelamento,
         BigDecimal valorLiquidoCancelamento,
         Boolean pagamentoRecebido,

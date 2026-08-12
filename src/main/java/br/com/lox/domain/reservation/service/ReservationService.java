@@ -5,6 +5,7 @@ import br.com.lox.domain.property.repository.PropertyRepository;
 import br.com.lox.domain.reservation.dto.CreateReservationDTO;
 import br.com.lox.domain.reservation.dto.UpdateReservationDTO;
 import br.com.lox.domain.reservation.entity.Despesa;
+import br.com.lox.domain.reservation.entity.Extensao;
 import br.com.lox.domain.reservation.entity.Reservation;
 import br.com.lox.domain.reservation.entity.ReservationStatus;
 import br.com.lox.domain.reservation.repository.ReservationRepository;
@@ -48,6 +49,13 @@ public class ReservationService {
                     .toList();
         }
 
+        List<Extensao> extensoes = new ArrayList<>();
+        if (data.extensoes() != null) {
+            extensoes = data.extensoes().stream()
+                    .map(e -> new Extensao(e.dataInicio(), e.valor()))
+                    .toList();
+        }
+
         var entity = new Reservation(
                 data.propriedadeId(),
                 data.nomeHospede(),
@@ -63,7 +71,8 @@ public class ReservationService {
                 data.custoEmpresaFaxina(),
                 data.faxinaPaga(),
                 data.faxinaData(),
-                despesas
+                despesas,
+                extensoes
         );
 
         propertyRepository.findById(data.propriedadeId())

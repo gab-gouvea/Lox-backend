@@ -59,7 +59,7 @@ class TaxaLimpezaBackfillRunnerTest {
                 Instant.now().minus(25, ChronoUnit.DAYS),
                 ReservationStatus.concluida, new BigDecimal("1000"), null,
                 ReservationSource.airbnb, 2,
-                null, false, null, null, null, null
+                null, false, null, null, null, null, null
         );
         ReflectionTestUtils.setField(r, "id", id);
         if (taxa != null) r.setTaxaLimpeza(taxa);
