@@ -70,6 +70,18 @@ public class LocacaoService {
                 data.status()
         );
 
+        entity.setConjuge(
+                data.incluirConjuge(),
+                data.conjugeNome(),
+                data.conjugeCpf(),
+                data.conjugeRg(),
+                data.conjugeDataNascimento(),
+                data.conjugeProfissao(),
+                data.conjugeEstadoCivil(),
+                data.conjugeEndereco(),
+                data.conjugeEmail()
+        );
+
         if (data.taxaLimpeza() != null) {
             entity.setTaxaLimpeza(data.taxaLimpeza());
         } else {

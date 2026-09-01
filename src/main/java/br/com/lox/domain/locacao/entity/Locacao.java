@@ -45,6 +45,17 @@ public class Locacao {
 
     private String email;
 
+    // Cônjuge (locação anual) — por lei, ambos devem constar no contrato quando casados
+    private Boolean incluirConjuge;
+    private String conjugeNome;
+    private String conjugeCpf;
+    private String conjugeRg;
+    private LocalDate conjugeDataNascimento;
+    private String conjugeProfissao;
+    private String conjugeEstadoCivil;
+    private String conjugeEndereco;
+    private String conjugeEmail;
+
     @Column(nullable = false)
     private Instant checkIn;
 
@@ -148,6 +159,20 @@ public class Locacao {
         this.taxaLimpeza = taxaLimpeza;
     }
 
+    public void setConjuge(Boolean incluirConjuge, String conjugeNome, String conjugeCpf, String conjugeRg,
+                            LocalDate conjugeDataNascimento, String conjugeProfissao, String conjugeEstadoCivil,
+                            String conjugeEndereco, String conjugeEmail) {
+        this.incluirConjuge = incluirConjuge;
+        this.conjugeNome = conjugeNome;
+        this.conjugeCpf = conjugeCpf;
+        this.conjugeRg = conjugeRg;
+        this.conjugeDataNascimento = conjugeDataNascimento;
+        this.conjugeProfissao = conjugeProfissao;
+        this.conjugeEstadoCivil = conjugeEstadoCivil;
+        this.conjugeEndereco = conjugeEndereco;
+        this.conjugeEmail = conjugeEmail;
+    }
+
     public void updateValues(UpdateLocacaoDTO data) {
         if (data.propriedadeId() != null) this.propriedadeId = data.propriedadeId();
         if (data.tipoLocacao() != null) this.tipoLocacao = data.tipoLocacao();
@@ -159,6 +184,15 @@ public class Locacao {
         if (data.estadoCivil() != null) this.estadoCivil = data.estadoCivil();
         if (data.endereco() != null) this.endereco = data.endereco();
         if (data.email() != null) this.email = data.email();
+        if (data.incluirConjuge() != null) this.incluirConjuge = data.incluirConjuge();
+        if (data.conjugeNome() != null) this.conjugeNome = data.conjugeNome();
+        if (data.conjugeCpf() != null) this.conjugeCpf = data.conjugeCpf();
+        if (data.conjugeRg() != null) this.conjugeRg = data.conjugeRg();
+        if (data.conjugeDataNascimento() != null) this.conjugeDataNascimento = data.conjugeDataNascimento();
+        if (data.conjugeProfissao() != null) this.conjugeProfissao = data.conjugeProfissao();
+        if (data.conjugeEstadoCivil() != null) this.conjugeEstadoCivil = data.conjugeEstadoCivil();
+        if (data.conjugeEndereco() != null) this.conjugeEndereco = data.conjugeEndereco();
+        if (data.conjugeEmail() != null) this.conjugeEmail = data.conjugeEmail();
         if (data.checkIn() != null) this.checkIn = data.checkIn();
         if (data.checkOut() != null) this.checkOut = data.checkOut();
         if (data.numMoradores() != null) this.numMoradores = data.numMoradores();
