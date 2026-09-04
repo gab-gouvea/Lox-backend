@@ -1,5 +1,6 @@
 package br.com.lox.domain.locacao.entity;
 
+import br.com.lox.domain.locacao.dto.ParcelaTaxaDTO;
 import br.com.lox.domain.locacao.dto.UpdateLocacaoDTO;
 import br.com.lox.domain.reservation.entity.Despesa;
 import jakarta.persistence.*;
@@ -107,8 +108,14 @@ public class Locacao {
     // mesTaxa/anoTaxa = mês em que a taxa é recebida (padrão: mês seguinte ao check-in).
     private Boolean semAdministracao;
     private BigDecimal percentualPrimeiroAluguel;
+    // mesTaxa/anoTaxa: formato antigo, parcela única. Mantidos para os registros já gravados —
+    // parcelasTaxa é a fonte de verdade quando preenchida.
     private Integer mesTaxa;
     private Integer anoTaxa;
+
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
+    @JoinColumn(name = "locacao_id")
+    private List<ParcelaTaxa> parcelasTaxa = new ArrayList<>();
 
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "locacao_id")
@@ -181,11 +188,20 @@ public class Locacao {
     }
 
     public void setSemAdministracao(Boolean semAdministracao, BigDecimal percentualPrimeiroAluguel,
-                                    Integer mesTaxa, Integer anoTaxa) {
+                                    Integer mesTaxa, Integer anoTaxa, List<ParcelaTaxaDTO> parcelasTaxa) {
         this.semAdministracao = semAdministracao;
         this.percentualPrimeiroAluguel = percentualPrimeiroAluguel;
         this.mesTaxa = mesTaxa;
         this.anoTaxa = anoTaxa;
+        replaceParcelasTaxa(parcelasTaxa);
+    }
+
+    private void replaceParcelasTaxa(List<ParcelaTaxaDTO> novas) {
+        if (novas == null) return;
+        this.parcelasTaxa.clear();
+        this.parcelasTaxa.addAll(novas.stream()
+                .map(p -> new ParcelaTaxa(p.dia(), p.mes(), p.ano(), p.valor()))
+                .toList());
     }
 
     public void updateValues(UpdateLocacaoDTO data) {
@@ -257,11 +273,13 @@ public class Locacao {
                 this.percentualPrimeiroAluguel = null;
                 this.mesTaxa = null;
                 this.anoTaxa = null;
+                this.parcelasTaxa.clear();
             }
         }
         if (data.percentualPrimeiroAluguel() != null) this.percentualPrimeiroAluguel = data.percentualPrimeiroAluguel();
         if (data.mesTaxa() != null) this.mesTaxa = data.mesTaxa();
         if (data.anoTaxa() != null) this.anoTaxa = data.anoTaxa();
+        replaceParcelasTaxa(data.parcelasTaxa());
         if (data.notas() != null) this.notas = data.notas();
         if (data.status() != null) this.status = data.status();
 

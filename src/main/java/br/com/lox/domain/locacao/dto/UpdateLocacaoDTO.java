@@ -62,5 +62,6 @@ public record UpdateLocacaoDTO(
         Boolean semAdministracao,
         BigDecimal percentualPrimeiroAluguel,
         Integer mesTaxa,
-        Integer anoTaxa
+        Integer anoTaxa,
+        List<ParcelaTaxaDTO> parcelasTaxa
 ) {}

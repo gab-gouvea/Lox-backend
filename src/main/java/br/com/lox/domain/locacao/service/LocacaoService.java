@@ -86,7 +86,8 @@ public class LocacaoService {
                 data.semAdministracao(),
                 data.percentualPrimeiroAluguel(),
                 data.mesTaxa(),
-                data.anoTaxa()
+                data.anoTaxa(),
+                data.parcelasTaxa()
         );
 
         if (data.taxaLimpeza() != null) {
