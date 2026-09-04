@@ -161,7 +161,7 @@ public class Reservation {
         if (data.extensoes() != null) {
             this.extensoes.clear();
             List<Extensao> novasExtensoes = data.extensoes().stream()
-                    .map(e -> new Extensao(e.dataInicio(), e.valor()))
+                    .map(e -> new Extensao(e.dataInicio(), e.valor(), e.pagamentoRecebido()))
                     .toList();
             this.extensoes.addAll(novasExtensoes);
         }

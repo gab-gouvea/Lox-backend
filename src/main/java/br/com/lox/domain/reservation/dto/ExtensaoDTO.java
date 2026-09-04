@@ -8,5 +8,6 @@ import java.time.Instant;
 
 public record ExtensaoDTO(
         @NotNull Instant dataInicio,
-        @NotNull @DecimalMin("0") BigDecimal valor
+        @NotNull @DecimalMin("0") BigDecimal valor,
+        Boolean pagamentoRecebido
 ) {}

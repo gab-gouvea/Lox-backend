@@ -22,8 +22,20 @@ public class Extensao {
     @Column(nullable = false)
     private BigDecimal valor;
 
+    /**
+     * Cada extensão é paga no mês em que começa, separada da reserva base — por isso tem
+     * confirmação de recebimento própria, e não a da reserva.
+     */
+    private Boolean pagamentoRecebido;
+
     public Extensao(Instant dataInicio, BigDecimal valor) {
         this.dataInicio = dataInicio;
         this.valor = valor;
+    }
+
+    public Extensao(Instant dataInicio, BigDecimal valor, Boolean pagamentoRecebido) {
+        this.dataInicio = dataInicio;
+        this.valor = valor;
+        this.pagamentoRecebido = pagamentoRecebido;
     }
 }

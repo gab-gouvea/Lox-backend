@@ -52,7 +52,7 @@ public class ReservationService {
         List<Extensao> extensoes = new ArrayList<>();
         if (data.extensoes() != null) {
             extensoes = data.extensoes().stream()
-                    .map(e -> new Extensao(e.dataInicio(), e.valor()))
+                    .map(e -> new Extensao(e.dataInicio(), e.valor(), e.pagamentoRecebido()))
                     .toList();
         }
 
