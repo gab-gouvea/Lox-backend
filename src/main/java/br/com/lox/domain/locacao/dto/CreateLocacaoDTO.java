@@ -1,6 +1,7 @@
 package br.com.lox.domain.locacao.dto;
 
 import br.com.lox.domain.locacao.entity.LocacaoStatus;
+import jakarta.validation.constraints.DecimalMax;
 import jakarta.validation.constraints.DecimalMin;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -38,6 +39,10 @@ public record CreateLocacaoDTO(
         @DecimalMin("0") BigDecimal percentualComissao,
         @DecimalMin("0") BigDecimal taxaLimpeza,
         String garantia,
+        Boolean semAdministracao,
+        @DecimalMin("0") @DecimalMax("100") BigDecimal percentualPrimeiroAluguel,
+        Integer mesTaxa,
+        Integer anoTaxa,
         Integer faxinaIntervaloDias,
         String notas,
         @NotNull LocacaoStatus status

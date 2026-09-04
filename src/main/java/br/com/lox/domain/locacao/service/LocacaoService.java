@@ -82,6 +82,13 @@ public class LocacaoService {
                 data.conjugeEmail()
         );
 
+        entity.setSemAdministracao(
+                data.semAdministracao(),
+                data.percentualPrimeiroAluguel(),
+                data.mesTaxa(),
+                data.anoTaxa()
+        );
+
         if (data.taxaLimpeza() != null) {
             entity.setTaxaLimpeza(data.taxaLimpeza());
         } else {

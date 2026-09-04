@@ -103,6 +103,13 @@ public class Locacao {
     // Reajuste anual (só anual) — data do último reajuste de valor
     private LocalDate ultimoReajuste;
 
+    // Sem administração (só anual) — intermediação: taxa única sobre o 1º aluguel.
+    // mesTaxa/anoTaxa = mês em que a taxa é recebida (padrão: mês seguinte ao check-in).
+    private Boolean semAdministracao;
+    private BigDecimal percentualPrimeiroAluguel;
+    private Integer mesTaxa;
+    private Integer anoTaxa;
+
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "locacao_id")
     private List<Despesa> despesas = new ArrayList<>();
@@ -173,6 +180,14 @@ public class Locacao {
         this.conjugeEmail = conjugeEmail;
     }
 
+    public void setSemAdministracao(Boolean semAdministracao, BigDecimal percentualPrimeiroAluguel,
+                                    Integer mesTaxa, Integer anoTaxa) {
+        this.semAdministracao = semAdministracao;
+        this.percentualPrimeiroAluguel = percentualPrimeiroAluguel;
+        this.mesTaxa = mesTaxa;
+        this.anoTaxa = anoTaxa;
+    }
+
     public void updateValues(UpdateLocacaoDTO data) {
         if (data.propriedadeId() != null) this.propriedadeId = data.propriedadeId();
         if (data.tipoLocacao() != null) this.tipoLocacao = data.tipoLocacao();
@@ -233,6 +248,20 @@ public class Locacao {
         } else if (data.ultimoReajuste() != null) {
             this.ultimoReajuste = data.ultimoReajuste();
         }
+        if (data.semAdministracao() != null) {
+            this.semAdministracao = data.semAdministracao();
+            // Alternar o modo zera os campos do modo oposto, para não deixar valor obsoleto no registro
+            if (Boolean.TRUE.equals(this.semAdministracao)) {
+                this.percentualComissao = null;
+            } else {
+                this.percentualPrimeiroAluguel = null;
+                this.mesTaxa = null;
+                this.anoTaxa = null;
+            }
+        }
+        if (data.percentualPrimeiroAluguel() != null) this.percentualPrimeiroAluguel = data.percentualPrimeiroAluguel();
+        if (data.mesTaxa() != null) this.mesTaxa = data.mesTaxa();
+        if (data.anoTaxa() != null) this.anoTaxa = data.anoTaxa();
         if (data.notas() != null) this.notas = data.notas();
         if (data.status() != null) this.status = data.status();
 

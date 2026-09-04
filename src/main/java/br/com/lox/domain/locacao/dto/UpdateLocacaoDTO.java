@@ -58,5 +58,9 @@ public record UpdateLocacaoDTO(
         String notas,
         LocacaoStatus status,
         LocalDate ultimoReajuste,
-        Boolean clearUltimoReajuste
+        Boolean clearUltimoReajuste,
+        Boolean semAdministracao,
+        BigDecimal percentualPrimeiroAluguel,
+        Integer mesTaxa,
+        Integer anoTaxa
 ) {}
